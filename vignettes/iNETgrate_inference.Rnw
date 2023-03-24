@@ -1,0 +1,418 @@
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is likely to be overwritten.
+%% Modified using Sweave2knitr().
+
+%\VignetteIndexEntry{iNETgrate: Integrating gene expression and DNA methylation data in a gene network}
+%\VignetteDepends{iNETgrate}
+%\VignetteKeywords{Gene expression, DNA methylation, Network, Biomedical Informatics, Systems Biology}
+%\VignettePackage{iNETgrate}
+%\VignetteEngine{knitr::knitr}
+
+%% Commands:
+\newcommand{\inet}{\Biocpkg{iNETgrate} }
+\newcommand{\W}{\mathcal{W}}
+\newcommand{\E}{\mathcal{E}}
+%% \DeclareMathOperator{\cor}{cor}
+
+
+\documentclass[12pt]{article}
+%% Packages:
+\usepackage{commath}  %% To use \abs
+%% Narrower margines:
+%%\usepackage[margin=0in]{geometry} %% Did not work, the margines are set in BiocStyle::latex.
+
+<<style-knitr, eval=TRUE, echo=FALSE, results="asis">>=
+BiocStyle::latex(width=90)
+@
+
+\bioctitle{\Biocpkg{iNETgrate}: Integrating gene expression and DNA methylation data in a gene network}
+\author{Isha Mehta and Habil Zare}
+\date{Modified: 5 December, 2021. Compiled: \today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+The biological processes that take place within a cell often
+require intricate coordination among
+\emph{multiple} genes and proteins %%, not just one gene or a single protein
+\cite{cho2012network}.
+Thus,
+the traditional approaches  that study associations between individual  genes and
+a %%specific disease or
+phenotype cannot  provide a full understanding of these complex
+biological phenomena \cite{halsey2015fickle, choi2009statistical}. 
+These approaches fail to pinpoint the biological mechanisms of
+complicated conditions such as cancer because  
+complex diseases are usually caused by collaboration of more than a few genes. 
+In particular,
+the detection of {\color{red} \ul{the subtle but coordinated and consistent}} changes
+in the expression levels of a set of  functionally related  %%[space] interacting
+genes is often more important and 
+informative  %% for understanding the underlying biology %%and pathology 
+than detecting dramatic changes in the expression levels of a few individual genes \cite{cho2012network}.
+
+\ul{Network analysis can detect subtle but consistent %% and coordinated 
+changes in a set of  interacting and functionally related genes} \cite{cho2012network}.
+The more data used to build the network, the better the network  obtained
+because the resulting network 
+models the interaction between genes more accurately.
+However, integrating different types of omics data into a
+single network can be challenging. For example, 
+DNA methylation is usually measured on hundreds of thousands of loci, and there is no one--to--one
+correspondence between these loci and genes, which are the nodes of the coexpression network.
+The \inet package is specifically developed to fuse (i.e., effectively integrate)
+DNA methylation data with gene expression data
+in a single network \cite{samimi2021dna}.
+The nodes (vertices) of the network are genes and the connection (edge) between two nodes
+is weighted based on both gene expression and DNA methylation data.
+The \inet package is a significant enhancement over our \Biocpkg{Pigengene} approach
+\cite{foroushani2016large} because it effectively \ul{i}nte\ul{grate}s DNA methylation data
+into the gene \ul{net}work \cite{samimi2021dna}.
+
+A practical exemplar application of \inet is in prognostication of acute myeloid leukemia (AML),
+which is a cancer of the blood and bone marrow \cite{samimi2021dna}.
+Most AML patients are classified as low--, intermediate--, and high--risk.
+There are urgent and effective treatments for high-- and low--risk patients, such as bone marrow
+transplant and chemotherapy, respectively. 
+The intermediate--risk group is a mixture of high-- and low--risk patients but, their actual risk
+level is not detectable based on current methods used in clinics.
+Since the survival rate of these patients cannot be predicted precisely,
+it is not possible to choose the most efficient 
+treatment for them. Therefore, there is a demand to find a way to reclassify these patients
+into either high-- or low--risk groups based on their clinical and molecular omics data.
+In most methods, gene expression is the primary data source to find risk groups. 
+Some research groups used mutation and molecular abnormalities along with gene 
+expression and found risk groups of more patients. Here, we illustrate using gene 
+expression and DNA methylation to reclassify intermediate--risk patients.
+
+\section{How to run \inet?}
+\subsection{Installation}
+\inet is an \R{} package that can be downloaded and
+installed from \Bioconductor{} by using following commands in R:
+\newline\newline
+\texttt{if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")}
+\newline
+\texttt{BiocManager::install("iNETgrate")}
+
+Alternatively, if the source code is already available,
+the package can be installed by the following command in Unix:
+\newline
+$\\$
+\texttt{R CMD INSTALL iNETgrate\_x.y.z.tar.gz}
+\newline
+$\\$
+where x.y.z determines the version. The second approach requires all
+the dependencies be installed manually, therefore, the first approach
+is preferred.
+
+\subsection{A quick overview}
+\inet constructs a weighted gene network where the weights of the edges is
+calculated by a combined correlation scores of gene expression and DNA methylation beta
+values, i.e., 
+
+%%
+\begin{equation}
+    \W(g_i,g_j)=(1-\mu)(\abs{cor_E(g_i,g_j)}) + \mu(\abs{cor_M(g_i,g_j)}),
+    \label{eq:sim}
+\end{equation}
+%%
+\noindent where $g_i$ and $g_j$ is a pair of genes for which edge weight is to
+be calculated, $\mu$ is a value between 0 and 1 given by the user, 
+$\abs{cor_E(g_i, g_j)}$ is the absolute correlation between expression of the gene
+pair, and similarly, $\abs{cor_M(g_i, g_j)}$ is the absolute correlation between
+beta values of the gene pair.
+
+\inet then identifies gene modules (i.e., clusters of coexpressed and co-methylated genes),
+computes an eigengene for each  module,
+and uses these biological signatures as features for classifying
+patients into risk categories. The main function is \Rfunction{iNETgrate} which 
+requires a gene expression profile, a DNA methylation beta value profile and 
+the corresponding conditions (types). Individual functions are also provided to 
+facilitate running the pipeline in a customized way. The inferred biological 
+signatures (eigengenes) are useful for further supervised or unsupervised analyses.
+
+\subsection{What is an eigengene?}
+In most functions of this package, eigenegenes are computed or used as robust
+biological signatures. Briefly, each eigengene $\E$ is a weighted average of the
+expression of all genes in a given set of $n$ genes
+(also known as a gene module or a cluster of genes). 
+
+%%\begin{ceqn}
+\begin{equation}
+    \E=\alpha_1 g_1 + \alpha_2 g_2 + \dots + \alpha_i g_i
+    \label{eq:eigen}
+\end{equation}
+%%\end{ceqn}
+\noindent where $\alpha_i$ represents the weight corresponding to gene $g_i$.
+The weights are adjusted  using PCA in a way that the explained variance is maximized. 
+This guarantees that the loss in the biological information in minimized.
+
+\subsection{What is an eigenloci?}
+To compute an effective DNA methylation value at gene
+level, we calculate a weighted average of beta values per gene. 
+Briefly, each eigenloci is a weighted average of the beta values of the probes 
+(loci) corresponding to the gene of interest.
+If the number of loci for a gene is less than six, all of them contribute to the eigenloci with some
+weight, which is determined automatically. Otherwise, we identify and use a subset of
+highly correlating loci (i.e., "core") to compute the eigenloci.
+A gene expression profile and an eigenloci profile are the two key inputs to the 
+\Rfunction{make.network} function.
+ 
+\subsection{A toy example}
+For a quick start, we demonstrate the application of \inet pipeline on a leukemia 
+dataset below \cite{samimi2021dna}. 
+The first step is to load the package and data in~\R{}:
+
+<<loading>>=
+library(iNETgrate)
+set.seed(1)
+@
+
+
+You can download the AML dataset from TCGA using the following function:
+
+<<download.data, eval=FALSE>>=
+tcgaAML <- download.data(dataProject="TCGA-LAML", savePath=".")
+@
+
+In this vignette, we use the toy data that is included
+in the package. Please note that the provided data in the package is sub--sampled 
+for a quick demonstration. For real applications, the expression of thousands 
+of genes should be used. Analyzing such input with \inet can take a few hours 
+and may require 5-10 GB of memory to save the results.
+
+The following commands run \inet pipeline on the toy data. First, we load the toy data.
+
+<<load_data>>=
+data(toyRawAml)
+class(toyRawAml)
+names(toyRawAml)
+@
+
+Then, we define the clinical settings and run \inet.
+
+<<oneStep, echo=TRUE, eval=FALSE>>=
+clinSettings <- c("patientIDCol"="bcr_patient_barcode",
+"eventCol"="vital_status",
+"timeCol"="days_to_last_followup",
+"riskCatCol"="acute_myeloid_leukemia_calgb_cytogenetics_risk_category",
+"riskFactorCol"="cytogenetic_abnormalities",
+"otherLabel"="NULL",
+"event"="Dead",
+"riskHigh"="Poor",
+"riskLow"="Favorable")
+print(clinSettings)
+
+inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings, 
+                        saveDir="iNETgrateOut", mus=0.6)
+@ 
+
+Results and figures are saved in the "iNETgrateOut" directory under the current directory.  
+For more advanced applications, the user is encouraged to analyze the data step-by-step
+and customize  the individual functions such as \Rfunction{make.network} and 
+\Rfunction{combined.eigengenes}.
+
+\subsection{Running the \inet pipeline step by step}
+If you are curious about the specific steps in the \inet pipeline, or you need to run some steps
+with different settings, you can follow the steps below.
+With the default values, the results will be similar to the output
+of the \Rcode{iNETgrate} function.
+
+\subsubsection{Setting paths}
+Before starting the analysis, we need to create some directory to save the plots and results.
+<<save_results, eval=TRUE>>=
+resPath <- file.path(getwd(), "iNETgrateRes") ## the result path
+netPath <- file.path(resPath, "net")
+survivalPath <- file.path(netPath, "surv")
+dir.create(survivalPath, showWarnings=FALSE, recursive=TRUE)
+@
+
+\subsubsection{Cleaning data}
+The first step of the \inet pipeline is to clean the input data using the
+\Rfunction{clean.allData} function.
+Here we make sure that the gene expression and DNA methylation matrices 
+have row and column names, and do not include too many \Rcode{NA} values. We
+impute missing values in the DNA methylation data if needed.
+Also, we clean and subset clinical data.
+
+<<clean_data, message=FALSE, eval=TRUE>>=
+riskCatCol <- "acute_myeloid_leukemia_calgb_cytogenetics_risk_category"
+riskFactorCol <- "cytogenetic_abnormalities"
+cleanedToy <- clean.allData(genExpr=toyRawAml$genExpr,
+                            genExprSampleInfo=toyRawAml$genExprSampleInfo, 
+                            rawDnam=toyRawAml$rawDnam, savePath=resPath, 
+                            clinical=toyRawAml$clinical, 
+                            riskCatCol=riskCatCol, riskFactorCol=riskFactorCol, 
+                            riskHigh="Poor", riskLow="Favorable", 
+                            otherLabel=NULL, verbose=1)
+@
+
+The output must be saved by the user if they intent to use the cleaned data later.
+The output is a list of \Rcode{4} components namely \Rcode{genExpr}, \Rcode{dnam},
+\Rcode{locus2gene} and \Rcode{survival}. \Rcode{survival} is a subset of clinical 
+data, where rows are patients and columns are vitality and survival related 
+information. \Rcode{genExpr} is a matrix of gene expression profile, where rows
+are genes and columns are patient IDs with sample type attached in cases where
+multiple sample types exists. \Rcode{dnam} is a matrix of DNA methylation
+profile, where rows are loci and columns are patient IDs with sample type attached 
+in cases where multiple sample types exists. DNA methylation data is processed 
+using \Rfunction{preprocess.Dnam} for missing beta values, and removing some 
+non-CpG loci or SNP enriched loci.Finally \Rcode{locus2gene} is a
+dataframe where rows are loci and columns provide information on the related gene. 
+
+This is followed by filtering and omitting genes or loci that have too low correlation
+with survival data and vital status. The \Rfunction{filter.low.cor} function computes these
+correlations and selects the desired data. We then find a combined set of genes that have 
+some correlation with survival time or vital status based on expression or DNA 
+methylation profiles using \Rfunction{compute.union}.
+The above--mentioned filtering and combining steps  
+can be performed using the function \Rfunction{elect.genes}, which is a wrapper for
+\Rfunction{filter.low.cor} and \Rfunction{compute.union} functions.
+
+<<select_genes, eval=TRUE>>=
+data(toyCleanedAml)
+cleaned <- toyCleanedAml
+elected <- elect.genes(genExpr=cleaned$genExpr, dnam=cleaned$dnam,
+                       survival=cleaned$survival, savePath=resPath, 
+                       event="Dead", locus2gene=cleaned$locus2gene, 
+                       doAlLoci=FALSE, verbose=1)
+@
+
+The output of \Rfunction{elect.genes} is a list of \Rcode{5} components including
+\Rcode{unionGenes}, which is a character vector of gene IDs that have some 
+correlation with survival time or vital status based on expression or DNA 
+methylation profiles. This union gene set is further used to make network and
+compute eigengenes in next steps.
+
+\subsubsection{Computing DNA methylation values at the gene level}
+Computing effective DNA methylation profile at gene level is necessary to 
+construct a combined network where the nodes of the network are genes. Hence, we
+compute eigenloci described earlier.
+
+<<computing_eigenloci, eval=TRUE>>=
+patientLabel <- setNames(as.character(cleaned$survival$Risk1),
+                         nm=rownames(cleaned$survival))
+inBoth <- intersect(colnames(cleaned$dnam), names(patientLabel))
+computedEloci <- compute.eigenloci(dnam=cleaned$dnam[ ,inBoth],
+    Labels=patientLabel[inBoth],
+    geNames=elected$unionGenes,
+    locus2gene=cleaned$locus2gene,
+    plotPath=resPath,
+    Label1="Low", Label2="High",
+    verbose=1)
+@
+
+\subsubsection{Making the combined network}
+
+Now, our data is ready to make a network using \Rfunction{make.network}. 
+Here, we use a \Rcode{mu} value to combine adjacency matrices from 
+the expression and DNA methylation (i.e., \Rcode{eigenloci}) datasets into 
+a single  network of genes (Eq.~\ref{eq:sim}).
+In real applications, several values for \Rcode{mu} can be used in a numeric vector
+and then the best value will be determined in later steps of the survival analysis.
+
+<<make_network, eval=TRUE>>=
+eigenloci <- computedEloci$eigenloci
+madeNet <- make.network(genExpr=cleaned$genExpr, eigenloci=eigenloci,
+                            geNames=elected$unionGenes, mus=0.6, 
+                            doRemoveTOM=TRUE, outPath=netPath, 
+                            verbose=1)
+print(madeNet$mu2modules[,1:5, drop=FALSE])               
+@
+The modules for each value of the input \Rcode{mu} are identified and returned in
+\Robject{madeNet\$mu2modules}, which is a matrix with the \Rcode{mu} values on rows
+and genes on columns.
+The entries of the matrix are integer values determining the module number a gene belongs to.
+
+
+\subsubsection{Computing eigengenes}
+
+The next step is to compute  a representative value (feature) for each identified module
+(i.e., an eigengene) based on gene expression and optionally, DNA methylation data. 
+
+<<combining_eigengenes, eval=TRUE>>=
+e1 <- combined.eigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
+                          netPath=netPath, geNames=elected$unionGenes,
+                          Labels=patientLabel, Label1="Low", 
+                          Label2="High", mus=c(0.6), combiningMu=NA,
+                          doIgnoreNas=TRUE, survival=cleaned$survival, 
+                          event="Dead", verbose=1, 
+                          mu2modules=madeNet$mu2modules)
+@
+
+
+\subsubsection{Survival analysis}
+
+Finally, our Cox regression analysis identifies the module (gene cluster) or the 
+combination of up to 3 modules that are together most useful for prognostication.
+The identified modules are used in an accelerated failure time (AFT) model to classify the patients
+into different risk categories.
+
+<<survival_analysis, fig.width=12, fig.height=8, eval=TRUE>>=
+s1 <- survival.analysis(survival=cleaned$survival, 
+                        Labels=patientLabel, favRisk="High", 
+                        subSet="Int", mus=0.6, 
+                        netPath=netPath, outPath=survivalPath, 
+                        xmax1=15, xmin1=0, verbose=1)
+@
+
+The above survival plots are saved in \Rcode{survivalPath}.
+Each plot compares the KM curves among risk categories based on \inet analysis, or the input labels
+from the clinical data, as mentioned in plot titles. The first two plots include all cases and
+the last two plots include only a subset of cases as described in each plot title. The confusion
+matrix is useful to compare the input labels vs. the risk categorization done by \inet
+(i.e., the numbers on the diagonal show the agreement while other numbers show the discrepancy).
+
+\subsubsection{Inferring eigengenes in another dataset}
+If you want to infer the selected eigengenes in an independent dataset for validation,
+the \Rfunction{best.inetgrator} can be used to extract the weights in an organized list,
+which then can be used by the \Rfunction{infer.eigengenes} function. 
+
+<<inetgrator, eval=FALSE>>=
+inetgrator <- best.inetgrator(bestPvalues=s1$bestPvalues, 
+                  usefuLoci=computedEloci$usefuLoci,
+                  lociPigen=computedEloci$lociPigen,
+                  netPath=netPath)
+@
+
+\subsubsection{Pathway analysis}
+Pathwyay overrepresentation analysis of the modules selected by our Cox analysis can be done using
+the  \Biocpkg{Pigengene}::\Rfunction{get.enriched.pw} function.
+For each selected module, a folder will be created, which includes an Excel file listing the
+pathways that are overrepresented by the genes in the corresponding module.
+
+<<pathway_analysis, eval=FALSE>>=
+selectedModules <- names(inetgrator$modules)
+geneList <- list()
+for(m1 in selectedModules)
+    geneList[[m1]] <- names(inetgrator$modules[[m1]]$genes)
+library(org.Hs.eg.db) ## Needed for human genes. 
+got <- Pigengene::get.enriched.pw(geneList, idType="SYMBOL",
+                 pathwayDb="KEGG", outPath=survivalPath)
+@
+
+%%<<validation, eval=FALSE>>=
+%%@
+
+
+\subsection{Citation}
+<<citation, results='asis', eval=TRUE>>=
+citation("iNETgrate")
+@
+
+\section{Session Information}
+The output of \Rfunction{sessionInfo} on the system that compiled
+this document is as follows:
+
+<<sessionInfo, results='asis', eval=TRUE>>=
+toLatex(sessionInfo())
+@
+
+\nocite{*}
+\bibliography{iNETgrate}
+
+\end{document}
