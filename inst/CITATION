@@ -8,7 +8,7 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 citEntry(entry="Article",
-        author = "Isha Mehta and et al.",
+        author = "Sogand Sajedi and et al.",
         title = "{iNETgrate: How to leverage epigenome data when they are missing?}",
         journal = "PLOS Computational Biology",
         year = "2022",
@@ -17,6 +17,6 @@ citEntry(entry="Article",
         pages = "?",
         month = "?",
 
-        textVersion = paste("Isha Mehta et al.", "(2022) ",  
-        "iNETgrate: How to leverage epigenome data when they are missing?, Mehta et al., PLOS Computational Biology. ", 
+        textVersion = paste("Sogand Sajedi et al.", "(2023) ",  
+        "iNETgrate: How to leverage epigenome data when they are missing?, Sajedi et al., PLOS Computational Biology. ", 
         "URL: https://bmcmedgenomics.biomedcentral.com/articles/10.1186/s12920-017-0253-6", ".", sep=""))
