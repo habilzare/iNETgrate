@@ -7,7 +7,7 @@ filter.low.cor <- function(Data, survival, whichData=c("expression", "dnam"),
 
     starTime <- Sys.time()
     message.if(me=cat("Cleaning all data started at:", format(starTime, usetz=TRUE)),
-               verbose=verbose-3)
+               verbose=verbose)
     message.if(me=cat("Dim of input Data to filter.low.cor():", dim(Data), "\n"), 
                verbose=verbose-1)
     message.if(me=cat("Correlation threshold: +/-", minCor, "\n"),
@@ -19,7 +19,8 @@ filter.low.cor <- function(Data, survival, whichData=c("expression", "dnam"),
     if(minCor==0 & ratio==1)    
         warning("All cleaned Data matrix will be returned since no threshold is defined!!")
     if(minCor!=0 & ratio!=1)
-        warning("Both minCor and ratio are passed as inputs!! Function will use both thresholds.")
+        message.if(paste("Both minCor and ratio are passed as inputs,",
+                         "both thresholds will be used."), verbose=verbose)
     if(length(whichData) !=1)
         stop("Please chose correct input data type!!(expression or dnam)")
     if(minCor>1||minCor<0)
