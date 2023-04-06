@@ -204,7 +204,8 @@ inferred <- infer.eigengenes(inetgrator=inetgrator, expr=valExpr)
 
 ## Plot the inferred eigengenes:
 toPlot <- inferred$eigengeneS
-Pigengene::pheatmap.type(Data=scale(toPlot), annRow=as.data.frame(patientLabel[rownames(toPlot)]), cluster_cols=FALSE)
+plToPlot <- as.data.frame(patientLabel[rownames(toPlot)])
+Pigengene::pheatmap.type(Data=scale(toPlot), annRow=plToPlot, cluster_cols=FALSE)
 
 print(Sys.time())
 }

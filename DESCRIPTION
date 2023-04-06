@@ -1,7 +1,7 @@
 Package: iNETgrate
 Type: Package
 Title: Integrates DNA methylation data with gene expression in a single gene network
-Version: 0.99.17
+Version: 0.99.32
 Date: 2023-03-24
 Authors@R: c(
     person("Isha", "Mehta", role = "aut",
@@ -25,7 +25,7 @@ Description: The iNETgrate package provides functions to build a correlation net
     and give a holistic view of the underlying molecular changes.
 Imports: SummarizedExperiment, GenomicRanges (>= 1.24.1), stats, WGCNA, grDevices, 
     graphics, survival, igraph, Pigengene (>= 1.19.26), Homo.sapiens, glmnet, 
-    caret, gplots, minfi, TCGAbiolinks, matrixStats, Rfast, tidyr, tidyselect, utils
+    caret, gplots, minfi, TCGAbiolinks (<= 2.24.3), matrixStats, Rfast, tidyr, tidyselect, utils
 Suggests: knitr, org.Hs.eg.db, org.Mm.eg.db, IlluminaHumanMethylation450kanno.ilmn12.hg19,
     AnnotationDbi
 License: GPL-3
