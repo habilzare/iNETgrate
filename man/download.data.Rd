@@ -79,9 +79,11 @@ for the study and integration of cancer data from GDC and GTEx,
 }
 
 \examples{
+\dontrun{ ## New TCGAbiolinks is buggy (2.24.3 < Version  <= 2.27.2).  
 tcgaAml <- download.data(dataProject="TCGA-LAML", savePath=getwd(), 
                          doDnam=FALSE, doClinical=TRUE, 
                          doExpr=FALSE, doMirna = FALSE, legacy=TRUE)
+}
 }
 
 \keyword{data}
