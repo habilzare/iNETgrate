@@ -134,7 +134,7 @@ Cox Model. \emph{Springer, New York. ISBN 0-387-98784-3}.
 }
 
 \seealso{
-\code{\link[stats:predict]{predict}}, \code{\link{survival.analysis}},
+\code{\link[stats:predict]{predict}}, \code{\link{analyzeSurvival}},
 \code{\link{plotKM}}
 }
 
@@ -147,7 +147,7 @@ head(s1) ## print
 
 afOut <- accelFailAnalysis(Data=toyEigengenes, survival=s1, 
                            time2day=1, riskCol="Risk1", until=1, xmax1=15, 
-                           resultPath=getwd(), abnormalityCol=NULL, 
+                           resultPath=tempdir(), abnormalityCol=NULL, 
                            riskLevel=c("Low"="Low", "Int"="Int", "High"="High"), 
                            subSet="Int", verbose=1)
 }

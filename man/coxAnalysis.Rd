@@ -7,7 +7,7 @@
 
 \usage{
 coxAnalysis(dataCategory="training", inputTime, inputEvent, inputMatrix, 
-            glmOutPath, weight=NULL, verbose=0)
+            outPath, weight=NULL, verbose=0)
 }
 
 \arguments{
@@ -27,7 +27,7 @@ coxAnalysis(dataCategory="training", inputTime, inputEvent, inputMatrix,
     A matrix of projected eigengenes for each sample, where row names are case
     IDs and column names are modules.}
 
-  \item{glmOutPath}{
+  \item{outPath}{
     Output path for coxAnalysis.}
 
   \item{weight}{
@@ -75,7 +75,7 @@ inputEvent <- setNames(survival[is.element(survival$PatientID, inBoth), "Dead"],
 
 coxOut <- coxAnalysis(dataCategory="allSamples", inputTime=inputTime, 
                       inputEvent=inputEvent, inputMatrix=toyEigengenes[inBoth,],
-                      glmOutPath=getwd(), verbose=1)
+                      outPath=tempdir(), verbose=1)
 }
 
 \keyword{glmnet}

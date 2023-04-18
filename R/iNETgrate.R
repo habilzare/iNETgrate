@@ -41,7 +41,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
     ## Clean data:
     message.if("Step 1/7: Cleaning all the Data...", verbose=verbose)
-    cleaned <- clean.allData(genExpr=Data$genExpr, 
+    cleaned <- cleanAllData(genExpr=Data$genExpr, 
                              genExprSampleInfo=Data$genExprSampleInfo, 
                              rawDnam=Data$rawDnam, savePath=saveDir, 
                              annLib=annLib, clinical=Data$clinical, 
@@ -57,7 +57,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
     ## Select genes
     message.if("Step 2/7: Filtering Data...", verbose=verbose)
-    elected <- elect.genes(genExpr=cleaned$genExpr, dnam=cleaned$dnam,
+    elected <- electGenes(genExpr=cleaned$genExpr, dnam=cleaned$dnam,
                            survival=cleaned$survival, savePath=saveDir, 
                            locus2gene=cleaned$locus2gene, 
                            doAlLoci=FALSE, verbose=verbose-1)
@@ -70,12 +70,12 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
     inBoth <- intersect(colnames(cleaned$dnam), names(patientLabel))
     LabelsIn <- patientLabel[names(patientLabel) %in% inBoth]
 
-    message.if(cat("Dropping ", length(patientLabel)-length(inBoth), "patients\n",
+    message.if(paste("Dropping ", length(patientLabel)-length(inBoth), "patients\n",
                    "because of missing survival, expression or methylation data\n"), 
                verbose=verbose)
     results[["Labels"]] <- LabelsIn
 
-    computedEloci <- compute.eigenloci(dnam=cleaned$dnam[ ,inBoth], 
+    computedEloci <- computeEigenloci(dnam=cleaned$dnam[ ,inBoth], 
                                        geNames=elected$unionGenes,
                                        locus2gene=cleaned$locus2gene, 
                                        Labels=LabelsIn, plotPath=saveDir,
@@ -90,9 +90,9 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
     message.if("Step 4/7: Making a integrative network...", verbose=verbose)
     netPath <- file.path(saveDir, "network")
     dir.create(netPath, showWarnings=FALSE, recursive=TRUE)
-    message.if(cat("Network data is saved at: \n", netPath, "\n"), verbose=verbose)
+    message.if(paste("Network data is saved at: \n", netPath, "\n"), verbose=verbose)
 
-    madeNetwork <- make.network(genExpr=cleaned$genExpr, eigenloci=eigenloci,
+    madeNetwork <- makeNetwork(genExpr=cleaned$genExpr, eigenloci=eigenloci,
                                 geNames=elected$unionGenes, mus=mus, 
                                 doRemoveTOM=doRemoveTOM, outPath=netPath, 
                                 minModuleSize=minModuleSize, corMethod=corMethod,
@@ -101,7 +101,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
     ## Get Eigengenes
     message.if("Step 5/7: Computing eigengenes...", verbose=verbose)
-    eigenGenes <- combined.eigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
+    eigenGenes <- computeEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
                                       netPath=netPath, geNames=elected$unionGenes,
                                       Labels=patientLabel, Label1=Label1, 
                                       Label2=Label2, mus=mus,
@@ -115,10 +115,10 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
     message.if("Step 6/7: Survial analysis for test set...", verbose=verbose)
     survivalPath <- file.path(netPath, "survival")
     dir.create(survivalPath, showWarnings=FALSE, recursive=TRUE)
-    message.if(cat("Survival output is saved at: \n", survivalPath, "\n"), 
+    message.if(paste("Survival output is saved at: \n", survivalPath, "\n"), 
                verbose=verbose)
 
-    survivalAnalysed <- survival.analysis(survival=cleaned$survival, 
+    survivalAnalysed <- analyzeSurvival(survival=cleaned$survival, 
                                           Labels=patientLabel, favRisk=favRisk, 
                                           subSet=subSet, mus=mus, 
                                           netPath=netPath, outPath=survivalPath,
@@ -131,12 +131,12 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
     ## Indentify best iNETgrator
     message.if("Step 7/7: Identifying the best module(iNETgrator)...", verbose=verbose)
-    message.if(cat("Best inetgrator output is saved at: \n", netPath, "\n"), 
+    message.if(paste("Best inetgrator output is saved at: \n", netPath, "\n"), 
                verbose=verbose)
 
     bestPval <- read.csv(file=file.path(survivalPath, "bestPvalues_e.csv"), header=TRUE)
     bestPval <- bestPval[, -1]
-    inetgrator <- best.inetgrator(bestPvalues=bestPval, usefuLoci=computedEloci$usefuLoci, 
+    inetgrator <- bestInetgrator(bestPvalues=bestPval, usefuLoci=computedEloci$usefuLoci, 
                                   lociPigen=computedEloci$lociPigen, netPath=netPath)
     results[["bestInet"]] <- inetgrator
 

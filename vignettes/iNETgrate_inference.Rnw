@@ -160,7 +160,7 @@ If the number of loci for a gene is less than six, all of them contribute to the
 weight, which is determined automatically. Otherwise, we identify and use a subset of
 highly correlating loci (i.e., "core") to compute the eigenloci.
 A gene expression profile and an eigenloci profile are the two key inputs to the 
-\Rfunction{make.network} function.
+\Rfunction{makeNetwork} function.
  
 \subsection{A toy example}
 For a quick start, we demonstrate the application of \inet pipeline on a leukemia 
@@ -175,8 +175,8 @@ set.seed(1)
 
 You can download the AML dataset from TCGA using the following function:
 
-<<download.data, eval=FALSE>>=
-tcgaAML <- download.data(dataProject="TCGA-LAML", savePath=".")
+<<downloadData, eval=FALSE>>=
+tcgaAML <- downloadData(dataProject="TCGA-LAML", savePath=".")
 @
 
 In this vignette, we use the toy data that is included
@@ -213,8 +213,8 @@ inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings,
 
 Results and figures are saved in the "iNETgrateOut" directory under the current directory.  
 For more advanced applications, the user is encouraged to analyze the data step-by-step
-and customize  the individual functions such as \Rfunction{make.network} and 
-\Rfunction{combined.eigengenes}.
+and customize  the individual functions such as \Rfunction{makeNetwork} and 
+\Rfunction{computeEigengenes}.
 
 \subsection{Running the \inet pipeline step by step}
 If you are curious about the specific steps in the \inet pipeline, or you need to run some steps
@@ -225,7 +225,8 @@ of the \Rcode{iNETgrate} function.
 \subsubsection{Setting paths}
 Before starting the analysis, we need to create some directory to save the plots and results.
 <<save_results, eval=TRUE>>=
-resPath <- file.path(getwd(), "iNETgrateRes") ## the result path
+resPath <- file.path(tempdir(), "iNETgrateRes") ## the result path
+message(paste("Results will be saved in:", resPath, sep="\n"))
 netPath <- file.path(resPath, "net")
 survivalPath <- file.path(netPath, "surv")
 dir.create(survivalPath, showWarnings=FALSE, recursive=TRUE)
@@ -233,7 +234,7 @@ dir.create(survivalPath, showWarnings=FALSE, recursive=TRUE)
 
 \subsubsection{Cleaning data}
 The first step of the \inet pipeline is to clean the input data using the
-\Rfunction{clean.allData} function.
+\Rfunction{cleanAllData} function.
 Here we make sure that the gene expression and DNA methylation matrices 
 have row and column names, and do not include too many \Rcode{NA} values. We
 impute missing values in the DNA methylation data if needed.
@@ -242,7 +243,7 @@ Also, we clean and subset clinical data.
 <<clean_data, message=FALSE, eval=TRUE>>=
 riskCatCol <- "acute_myeloid_leukemia_calgb_cytogenetics_risk_category"
 riskFactorCol <- "cytogenetic_abnormalities"
-cleanedToy <- clean.allData(genExpr=toyRawAml$genExpr,
+cleanedToy <- cleanAllData(genExpr=toyRawAml$genExpr,
                             genExprSampleInfo=toyRawAml$genExprSampleInfo, 
                             rawDnam=toyRawAml$rawDnam, savePath=resPath, 
                             clinical=toyRawAml$clinical, 
@@ -265,27 +266,27 @@ non-CpG loci or SNP enriched loci.Finally \Rcode{locus2gene} is a
 dataframe where rows are loci and columns provide information on the related gene. 
 
 This is followed by filtering and omitting genes or loci that have too low correlation
-with survival data and vital status. The \Rfunction{filter.low.cor} function computes these
+with survival data and vital status. The \Rfunction{filterLowCor} function computes these
 correlations and selects the desired data. We then find a combined set of genes that have 
 some correlation with survival time or vital status based on expression or DNA 
-methylation profiles using \Rfunction{compute.union}.
+methylation profiles using \Rfunction{computeUnion}.
 The above--mentioned filtering and combining steps  
-can be performed using the function \Rfunction{elect.genes}, which is a wrapper for
-\Rfunction{filter.low.cor} and \Rfunction{compute.union} functions.
+can be performed using the function \Rfunction{electGenes}, which is a wrapper for
+\Rfunction{filterLowCor} and \Rfunction{computeUnion} functions.
 
 <<select_genes, eval=TRUE>>=
 data(toyCleanedAml)
 cleaned <- toyCleanedAml
-elected <- elect.genes(genExpr=cleaned$genExpr, dnam=cleaned$dnam,
+elected <- electGenes(genExpr=cleaned$genExpr, dnam=cleaned$dnam,
                        survival=cleaned$survival, savePath=resPath, 
                        event="Dead", locus2gene=cleaned$locus2gene, 
                        doAlLoci=FALSE, verbose=1)
 @
 
-The output of \Rfunction{elect.genes} is a list of \Rcode{5} components including
+The output of \Rfunction{electGenes} is a list of \Rcode{5} components including
 \Rcode{unionGenes}, which is a character vector of gene IDs that have some 
 correlation with survival time or vital status based on expression or DNA 
-methylation profiles. This union gene set is further used to make network and
+methylation profiles. This union gene set is further used to makeNetwork and
 compute eigengenes in next steps.
 
 \subsubsection{Computing DNA methylation values at the gene level}
@@ -297,7 +298,7 @@ compute eigenloci described earlier.
 patientLabel <- setNames(as.character(cleaned$survival$Risk1),
                          nm=rownames(cleaned$survival))
 inBoth <- intersect(colnames(cleaned$dnam), names(patientLabel))
-computedEloci <- compute.eigenloci(dnam=cleaned$dnam[ ,inBoth],
+computedEloci <- computeEigenloci(dnam=cleaned$dnam[ ,inBoth],
     Labels=patientLabel[inBoth],
     geNames=elected$unionGenes,
     locus2gene=cleaned$locus2gene,
@@ -308,16 +309,16 @@ computedEloci <- compute.eigenloci(dnam=cleaned$dnam[ ,inBoth],
 
 \subsubsection{Making the combined network}
 
-Now, our data is ready to make a network using \Rfunction{make.network}. 
+Now, our data is ready to make a network using \Rfunction{makeNetwork}. 
 Here, we use a \Rcode{mu} value to combine adjacency matrices from 
 the expression and DNA methylation (i.e., \Rcode{eigenloci}) datasets into 
 a single  network of genes (Eq.~\ref{eq:sim}).
 In real applications, several values for \Rcode{mu} can be used in a numeric vector
-and then the best value will be determined in later steps of the survival analysis.
+and then the best value will be determined in later steps of the analyzeSurvival.
 
-<<make_network, eval=TRUE>>=
+<<makeNetwork, eval=TRUE>>=
 eigenloci <- computedEloci$eigenloci
-madeNet <- make.network(genExpr=cleaned$genExpr, eigenloci=eigenloci,
+madeNet <- makeNetwork(genExpr=cleaned$genExpr, eigenloci=eigenloci,
                             geNames=elected$unionGenes, mus=0.6, 
                             doRemoveTOM=TRUE, outPath=netPath, 
                             verbose=1)
@@ -335,7 +336,7 @@ The next step is to compute  a representative value (feature) for each identifie
 (i.e., an eigengene) based on gene expression and optionally, DNA methylation data. 
 
 <<combining_eigengenes, eval=TRUE>>=
-e1 <- combined.eigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
+e1 <- computeEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
                           netPath=netPath, geNames=elected$unionGenes,
                           Labels=patientLabel, Label1="Low", 
                           Label2="High", mus=c(0.6), combiningMu=NA,
@@ -352,8 +353,8 @@ combination of up to 3 modules that are together most useful for prognostication
 The identified modules are used in an accelerated failure time (AFT) model to classify the patients
 into different risk categories.
 
-<<survival_analysis, fig.width=12, fig.height=8, eval=TRUE>>=
-s1 <- survival.analysis(survival=cleaned$survival, 
+<<analyzeSurvival, fig.width=12, fig.height=8, eval=TRUE>>=
+s1 <- analyzeSurvival(survival=cleaned$survival, 
                         Labels=patientLabel, favRisk="High", 
                         subSet="Int", mus=0.6, 
                         netPath=netPath, outPath=survivalPath, 
@@ -369,11 +370,11 @@ matrix is useful to compare the input labels vs. the risk categorization done by
 
 \subsubsection{Inferring eigengenes in another dataset}
 If you want to infer the selected eigengenes in an independent dataset for validation,
-the \Rfunction{best.inetgrator} can be used to extract the weights in an organized list,
-which then can be used by the \Rfunction{infer.eigengenes} function. 
+the \Rfunction{bestInetgrator} can be used to extract the weights in an organized list,
+which then can be used by the \Rfunction{inferEigengenes} function. 
 
 <<inetgrator, eval=FALSE>>=
-inetgrator <- best.inetgrator(bestPvalues=s1$bestPvalues, 
+inetgrator <- bestInetgrator(bestPvalues=s1$bestPvalues, 
                   usefuLoci=computedEloci$usefuLoci,
                   lociPigen=computedEloci$lociPigen,
                   netPath=netPath)

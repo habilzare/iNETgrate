@@ -27,7 +27,7 @@
     (2013). New England Journal of Medicine 368.22: 2059-2074.}
 
 \seealso{
-  \code{\link{iNETgrate-package}}, \code{\link{combined.eigengenes}},
+  \code{\link{iNETgrate-package}}, \code{\link{computeEigengenes}},
   \code{\link{toyCleanedAml}}, \code{\link{toyComputEloci}}
 }
 
@@ -41,13 +41,13 @@ eigenloci <- toyComputEloci$eigenloci
 patientLabel <- as.matrix(toyCleanedAml$survival)[,"Risk1"]
 
 # Path to the network
-netPath <- file.path(getwd(), "net")
+netPath <- file.path(tempdir(), "net")
 dir.create(netPath, showWarnings=FALSE)
-madeNetwork <- make.network(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
+madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             geNames=colnames(eigenloci), mus=c(0.6), 
                             outPath=netPath, verbose=0)
 
-eigengenes <- combined.eigengenes(genExpr=toyCleanedAml$genExpr, 
+eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 
                                   Label1="Low", Label2="High", 

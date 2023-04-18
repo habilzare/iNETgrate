@@ -99,10 +99,8 @@ survival <- toyCleanedAml$survival
 inputTime <- setNames(survival[,"Time"]/365, nm=survival[, "PatientID"])
 inputEvent <- setNames(survival[,"Dead"], nm=survival[, "PatientID"])
 cond <- setNames(survival[,"Risk1"], nm=survival[, "PatientID"])
-savePath <- file.path(getwd(), "plotKM.png")
 
-plottedKM <- plotKM(inputTime=inputTime, inputEvent=inputEvent, cond=cond,    
-                    plotFile=savePath, verbose=1)
+plottedKM <- plotKM(inputTime=inputTime, inputEvent=inputEvent, cond=cond)
 }
 
 \keyword{dplot}

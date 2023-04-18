@@ -28,6 +28,8 @@ plotKM <- function(inputTime, inputEvent, cond,
                      legendCex=1, ylab1=ylab1, pvalDigits=pvalDigits,
                      xmax1=xmax1, xmin1=xmin1, verbose=verbose-2, ...)
         dev.off()
+            message.if(paste("A KM plot was saved at:", 
+                           dirname(plotFile), "\n"), verbose=verbose-1)
     }
     ## plotFile is NULL from here to the end of the function.
 

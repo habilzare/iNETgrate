@@ -13,7 +13,7 @@ library(igraph)
 library(Homo.sapiens)
 library(WGCNA)
 if(!require(iNETgrate)){ ## It may not have been built yet! 
-    ## However iNETgrate package cannot be compiled without sample data. So sourcing "sample.data.R"
+    ## However iNETgrate package cannot be compiled without sample data. So sourcing "sampleData.R"
     source("~/proj/genetwork/code/Ghazal/Packing/update.R")
 }
 
@@ -37,7 +37,7 @@ set.seed(seed)
 
 ## Download data
 print("Downloading and preparing data...")
-downloaded <- download.data(dataProject=dataProject, savePath=savePath)
+downloaded <- downloadData(dataProject=dataProject, savePath=savePath)
 print("Downloading completed!!")
 
 ## Clean data
@@ -45,7 +45,7 @@ print("Cleaning and preparing all data...")
 riskCatCol <- "acute_myeloid_leukemia_calgb_cytogenetics_risk_category"
 riskFactorCol <- "cytogenetic_abnormalities"
 
-cleaned <- clean.allData(genExpr=downloaded$genExpr,
+cleaned <- cleanAllData(genExpr=downloaded$genExpr,
                          genExprSampleInfo=downloaded$genExprSampleInfo, 
                          rawDnam=downloaded$rawDnam, savePath=savePath, 
                          annLib="Auto", clinical=downloaded$clinical, 
@@ -57,13 +57,13 @@ print("Cleaning data done!!")
 
 ## Prepare toy data
 print("Creating sample of data!!")
-toyData <- sample.data(Data=downloaded, cleanData=cleaned)
+toyData <- sampleData(Data=downloaded, cleanData=cleaned)
 
 cleanedS <- toyData$cleaned
 
 rawS <- toyData$rawData
 
-cleanToy <- clean.allData(genExpr=rawS$genExpr,
+cleanToy <- cleanAllData(genExpr=rawS$genExpr,
                           genExprSampleInfo=rawS$genExprSampleInfo, 
                           rawDnam=rawS$rawDnam, savePath=savePath, 
                           annLib="Auto", clinical=rawS$clinical, 
@@ -72,7 +72,7 @@ cleanToy <- clean.allData(genExpr=rawS$genExpr,
                           verbose=1)
 
 print("Electing genes...")
-elected <- elect.genes(genExpr=cleanToy$genExpr, dnam=cleanToy$dnam,
+elected <- electGenes(genExpr=cleanToy$genExpr, dnam=cleanToy$dnam,
                        survival=cleanToy$survival, savePath=samplePath, event="Dead", 
                        locus2gene=cleanToy$locus2gene, doAlLoci=FALSE, verbose=1)
 
@@ -80,7 +80,7 @@ print("Computing eigenloci!!")
 patientLabel <- setNames(as.character(cleanToy$survival$Risk1),
                          nm=rownames(cleanToy$survival))
 inBoth <- intersect(colnames(cleanToy$dnam), names(patientLabel))
-computedEloci <- compute.eigenloci(dnam=cleanToy$dnam[ ,inBoth], 
+computedEloci <- computeEigenloci(dnam=cleanToy$dnam[ ,inBoth], 
                                    geNames=elected$unionGenes,
                                    locus2gene=cleanToy$locus2gene, 
                                    Labels=patientLabel[names(patientLabel) %in% inBoth], 
@@ -91,14 +91,14 @@ computedEloci <- compute.eigenloci(dnam=cleanToy$dnam[ ,inBoth],
                                    doDebug=FALSE, verbose=1)
 
 eigenloci <- computedEloci$eigenloci
-madeNetwork <- make.network(genExpr=cleanToy$genExpr, eigenloci=eigenloci,
+madeNetwork <- makeNetwork(genExpr=cleanToy$genExpr, eigenloci=eigenloci,
                             geNames=elected$unionGenes, mus=0.6, 
                             doRemoveTOM=TRUE, outPath=netPath, 
                             minModuleSize=5, corMethod="pearson",
                             doReturNetworks=FALSE,  RsquaredCut=0.75, 
                             verbose=1)
 
-eGenes <- combined.eigengenes(genExpr=cleanToy$genExpr, eigenloci=eigenloci, 
+eGenes <- computeEigengenes(genExpr=cleanToy$genExpr, eigenloci=eigenloci, 
                               netPath=netPath, geNames=elected$unionGenes,
                               Labels=patientLabel, Label1="High", Label2="Low", 
                               mus=c(0.6), combiningMu=NA, 

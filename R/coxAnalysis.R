@@ -1,5 +1,5 @@
 coxAnalysis <- function(dataCategory="training", inputTime,
-                         inputEvent, inputMatrix, glmOutPath, weight=NULL,
+                         inputEvent, inputMatrix, outPath, weight=NULL,
                          verbose=0){
     message.if("Cox analysis...", verbose=verbose)
     if(inherits(inputMatrix, "data.frame")){
@@ -10,13 +10,15 @@ coxAnalysis <- function(dataCategory="training", inputTime,
     }
 
     ## Output Files
-    glmAllFile <- file.path(glmOutPath, paste0(dataCategory, "_coefGlmnet.txt"))
+    message.if(paste("coxAnalysis results will be saved at:", 
+                     outPath, "\n"), verbose=verbose-1)
+    glmAllFile <- file.path(outPath, paste0(dataCategory, "_coefGlmnet.txt"))
     
-    y1Out <- file.path(glmOutPath, paste0(dataCategory, "_y.RData"))
+    y1Out <- file.path(outPath, paste0(dataCategory, "_y.RData"))
     
-    pngGlmOut <- file.path(glmOutPath, paste0(dataCategory, "_regularization.png"))
+    pngGlmOut <- file.path(outPath, paste0(dataCategory, "_regularization.png"))
 
-    dir.create(path=glmOutPath, recursive=TRUE, showWarnings=FALSE)
+    dir.create(path=outPath, recursive=TRUE, showWarnings=FALSE)
     
     ## Calculate Surv object. This is dependent on the category of data. Also
     ## create a temporary yVar variable
@@ -43,7 +45,7 @@ coxAnalysis <- function(dataCategory="training", inputTime,
                                 weights=weight);
 
     ## coef
-    capture.output(print(coef(fitGlmnet)[,seq_len(10)]), cat("\n\n"),
+    capture.output(coef(fitGlmnet)[,seq_len(10)], cat("\n\n"),
                    file=glmAllFile, append=TRUE)
     
     png(pngGlmOut)
@@ -85,7 +87,7 @@ coxAnalysis <- function(dataCategory="training", inputTime,
     ## Get last module
     bestModules[bestModules==""] <- rownames(coef(fitGlmnet))[!rownames(coef(fitGlmnet)) %in%
                                                               bestModules]
-    save.if(orderedCoeff, file=file.path(glmOutPath, paste0(dataCategory,"_coeff.RData")),
+    save.if(orderedCoeff, file=file.path(outPath, paste0(dataCategory,"_coeff.RData")),
             verbose=verbose-1)    
     
     return(bestModules)

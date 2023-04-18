@@ -5,12 +5,12 @@
 
 \description{
     Runs the entire iNETgrate pipeline; from cleaning the data to finding the best
-    modules and performing survival analysis.
+    modules and performing analyzeSurvival.
     Specifically, it computes the eigenloci
     (weighted average of beta values per gene), identifies the gene modules 
     using coexpression network analysis, computes eigengenes, identifies best
     modules, reclassifies patients into risk groups based on the
-    eigengene values, and performs survival analysis.}
+    eigengene values, and performs analyzeSurvival.}
 
 \usage{
 iNETgrate(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate", 
@@ -42,7 +42,7 @@ iNETgrate(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
     (e.g., "Dead" may mean dead due to the disease) as indicated in
     "eventCol". "riskHigh", and "riskLow" are the values of "riskCatCol"
     corresponding to high-- and low--risk, respectively. 
-    See the \code{\link{clean.allData}} function and  the example for
+    See the \code{\link{cleanAllData}} function and  the example for
     further details.}
 
   \item{mus}{
@@ -117,7 +117,7 @@ iNETgrate(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
   \item{eOrMs}{
     A character vector to determine which eigengenes (stored at netPath) 
-    to be used as input data for survival analysis, e.g., c("m", "e",
+    to be used as input data for analyzeSurvival, e.g., c("m", "e",
     "em"), where "e" means "only gene expression", "m" means
     "DNA methylation", and "em" means the combination of both data types
     is used to compute an eigengene for a module.}
@@ -182,7 +182,7 @@ A list with following components:
                 the corresponding risk levels.}
   \item{eigenloci}{A matrix of DNA methylation level per genes (columns)
     with each row corresponding to a patient.}
-  \item{bestInet}{A list of outputs from \code{\link{best.inetgrator}} function.}
+  \item{bestInet}{A list of outputs from \code{\link{bestInetgrator}} function.}
 }
 
 \references{
@@ -207,9 +207,9 @@ Hierarchical Clustering. \emph{Journal of Statistical Software}, \bold{46(11),1-
 
 \seealso{
 \code{\link[WGCNA:pickSoftThreshold]{pickSoftThreshold}},
-\code{\link{clean.allData}}, \code{\link{elect.genes}},
-\code{\link{make.network}}, \code{\link{combined.eigengenes}},
-\code{\link{best.inetgrator}}, \code{\link{survival.analysis}},
+\code{\link{cleanAllData}}, \code{\link{electGenes}},
+\code{\link{makeNetwork}}, \code{\link{computeEigengenes}},
+\code{\link{bestInetgrator}}, \code{\link{analyzeSurvival}},
 \code{\link{toyRawAml}}
 }
 

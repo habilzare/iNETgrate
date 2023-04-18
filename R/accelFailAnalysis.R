@@ -53,7 +53,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
         inBoth <- intersect(rownames(survival), rownames(Data))
         if(length(inBoth)==0)
             stop("Row names in Data and survival should intersect!")
-        message.if(cat("Analyzing only ", length(inBoth), "samples for which \n",
+        message.if(paste("Analyzing only ", length(inBoth), "samples for which \n",
                        "both survival and eigengene data are available.\n"),
                    verbose=verbose-1)
         survival <- survival[inBoth, ]
@@ -76,10 +76,11 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
     inputTime <- inputTime/365
     inputEvent <- survival[keepSamples, eventCol]
     names(inputEvent) <- keepSamples
-    message.if(cat("inputEvent: \n"), verbose=verbose)
+    message.if("inputEvent: ", verbose=verbose)
+    ##eventMat <- t(as.matrix(table(inputEvent)))
+    ##message.if(me=paste(colnames(eventMat), eventMat), verbose=verbose)
     message.if(print(table(inputEvent)), verbose=verbose)
     survival <- survival[keepSamples, ]
-
 
     ##QC:
     inputEvent <- inputEvent[names(inputTime)]
@@ -91,7 +92,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
     ## riskCol <- make.names(riskCol, unique=TRUE)
     ## colnames(survival) <- make.names(colnames(survival), unique=TRUE)
 
-    message.if(me=cat("Risk levels", riskLevel, "\n"), verbose=verbose-2)
+    message.if(me=paste("Risk levels", riskLevel), verbose=verbose-2)
     if(!("Int" %in% names(riskLevel)))
         riskLevel <- c(riskLevel["Low"], "Int"="Int", riskLevel["High"])
     ##^e.g., riskLevel["High"]="Poor"
@@ -103,6 +104,8 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
     yTrain <- Surv(time=inputTime, event=inputEvent, type="right")
     names(yTrain) <- names(inputTime)
     dir.create(path=resultPath, recursive=TRUE, showWarnings=FALSE)
+    message.if(paste("accelFailAnalysis results will be saved at:", 
+                     resultPath), verbose=verbose-1)
 
 
     ## Int risk patients based on 1)cytogenetic 2)gerstung
@@ -152,6 +155,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
         subsetPath <- file.path(resultPath, subPowerSet)
         dir.create(path=subsetPath, recursive=TRUE, showWarnings=FALSE)
         outFile <- file.path(subsetPath, paste("cox_aft.txt", sep=""))
+        message.if(paste("accelFailAnalysis is reporting in: ", outFile), verbose=verbose-1) 
 
         ## Surv
         formulaI <- as.formula(paste("yTrain ~", paste(currentModule, collapse="+")))
@@ -178,10 +182,10 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
             doRisk <- TRUE
         }
 
-        message.if("Finding cutoffs...", verbose=verbose)
+        message.if("Finding cutoffs...", verbose=verbose-1)
         customized.fac <- function(custMinRecall, custRisk, custLabels=NULL){
             time1 <- setNames(trainD[, "Years"], nm=rownames(trainD))
-            f1 <- find.alive.cutoff(hope=predictI, time1=time1, 
+            f1 <- findAliveCutoff(hope=predictI, time1=time1, 
                                     until=until, verbose=verbose-3, resPath=subsetPath, 
                                     Labels=custLabels, 
                                     minRecall=custMinRecall, risk=custRisk)
@@ -219,7 +223,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
         subsets[[subPowerSet]][["fitI"]] <- fitI
 
         outCondMat <- t(as.matrix(table(cond)))
-        message.if(me=cat(colnames(outCondMat), "\n", outCondMat, "\n"),
+        message.if(me=paste(colnames(outCondMat), outCondMat),
                    verbose=verbose-2)
 
         ## Did we get more than 1 condition?
@@ -399,7 +403,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
             c1 <- factor(cond, levels=c("Low", "Int", "High"))
             coxData1 <- as.data.frame(cbind(Risk=r1, cond=c1))
             fitCoxRc <- survival::coxph(formula=formulaRc, data=coxData1)
-            capture.output(cat("\n Coefficients of the Cox model using both Risk and cond:"), 
+            capture.output("Coefficients of the Cox model using both Risk and cond:", 
                            file=outFile, append=TRUE)
             capture.output(summary(fitCoxRc), file=outFile, append=TRUE)
             textplot(summary(fitCoxRc)$coefficients)

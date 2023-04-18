@@ -28,10 +28,10 @@ importFrom(tidyselect, all_of)
 importFrom(BiocStyle, latex)
 
 ## Exports:
-exportPattern(accelFailAnalysis, best.inetgrator, combined.eigengenes, compute.inetgrator,
-              compute.union, coxAnalysis, filter.low.cor, find.alive.cutoff,
-              find.core, make.network, plotKM, find.tcga.duplicates,
-              survival.analysis, download.data, prepare.survival, plotLoci.gene, 
-              plotLoci.num, compute.distance.to.tss, sample.data,
-              compute.eigenloci, clean.allData, preprocess.dnam, iNETgrate,
-              sample.to.patient, elect.genes, infer.eigengenes, create.locusGene) 
+exportPattern(accelFailAnalysis, bestInetgrator, computeEigengenes, computeInetgrator,
+              computeUnion, coxAnalysis, filterLowCor, findAliveCutoff,
+              findCore, makeNetwork, plotKM, findTcgaDuplicates,
+              analyzeSurvival, downloadData, prepareSurvival, plotLociTss, 
+              plotLociNum, distanceToTss, sampleData,
+              computeEigenloci, cleanAllData, preprocessDnam, iNETgrate,
+              sample2atient, electGenes, inferEigengenes, createLocusGene) 

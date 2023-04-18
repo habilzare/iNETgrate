@@ -41,18 +41,18 @@ data(toyComputEloci)
 ## How to reproduce the data:
 data(toyCleanedAml)
 survivalAml <- toyCleanedAml$survival
-plotPath <- file.path(getwd(), "plots")
+plotPath <- file.path(tempdir(), "plots")
 dir.create(plotPath, showWarnings=FALSE)
 
 print("Electing genes...")
-elected <- elect.genes(genExpr=toyCleanedAml$genExpr, dnam=toyCleanedAml$dnam,
-                       survival=survivalAml, savePath=getwd(), 
+elected <- electGenes(genExpr=toyCleanedAml$genExpr, dnam=toyCleanedAml$dnam,
+                       survival=survivalAml, savePath=tempdir(), 
                        locus2gene=toyCleanedAml$locus2gene, verbose=1)
 
 print("Computing eigenloci!!")
 patientLabel <- setNames(as.character(survivalAml[,"Risk1"]), nm=rownames(survivalAml))
 inBoth <- intersect(colnames(toyCleanedAml$dnam), names(patientLabel))
-computedEloci <- compute.eigenloci(dnam=toyCleanedAml$dnam[ ,inBoth], 
+computedEloci <- computeEigenloci(dnam=toyCleanedAml$dnam[ ,inBoth], 
                                    locus2gene=toyCleanedAml$locus2gene, 
                                    geNames=elected$unionGenes,
                                    Labels=patientLabel[is.element(names(patientLabel), inBoth)], 

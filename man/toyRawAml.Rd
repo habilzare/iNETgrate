@@ -52,18 +52,18 @@ AML cases are included here.}
 ##which can take some time to run. 
 \donttest{
 dataProject <- "TCGA-LAML"
-dataPath <- file.path(getwd(), "data", dataProject)
+dataPath <- file.path(tempdir(), "data", dataProject)
 dir.create(savePath)
 
 ## Downloading data
-rawData <- download.data(dataProject=dataProject, savePath=dataPath)
+rawData <- downloadData(dataProject=dataProject, savePath=dataPath)
 
 ## Cleaning data
 print("Cleaning and preparing all data...")
 riskCatCol <- "acute_myeloid_leukemia_calgb_cytogenetics_risk_category"
 riskFactorCol <- "cytogenetic_abnormalities"
 
-cleaned <- clean.allData(genExpr=rawData$genExpr,
+cleaned <- cleanAllData(genExpr=rawData$genExpr,
                          genExprSampleInfo=rawData$genExprSampleInfo, 
                          rawDnam=rawData$rawDnam, savePath=dataPath, 
                          annLib="Auto", clinical=rawData$clinical, 
@@ -74,7 +74,7 @@ cleaned <- clean.allData(genExpr=rawData$genExpr,
 ## Prepare toy data
 print("Creating sample of data!!")
 set.seed(seed=1)
-toyData <- sample.data(Data=rawData, cleanData=cleaned, seed=1)
+toyData <- sampleData(Data=rawData, cleanData=cleaned, seed=1)
 toyRawAml <- toyData$rawData
 }
 
