@@ -91,7 +91,7 @@ findAliveCutoff <- function (hope, time1, until, minRecall=0.2, risk="Low", Labe
             message("lowPrecision[ind]: ", lowPrecision[ind])
             plot(x=hope[seq_len(ind)], y=time1[seq_len(ind)], xlim=range(hope), ylim=range(time1))
             title(paste("maxLowPrecision=", maxLowPrecision, ", maxHighPrecision=", maxHighPrecision))
-            browser()
+            ##browser()
         }
     }
     cutoff <- hope[ind0]

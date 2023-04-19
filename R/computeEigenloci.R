@@ -82,7 +82,7 @@ computeEigenloci <- function(dnam, locus2gene, geNames=NULL, Labels,
     if(doDebug){
         save(eigenloci, lociPigen, usefuLoci,
              file=file.path(plotPath, "trim_debug.RData"))
-        browser()
+        ##browser()
     } 
 
     ## Plot the loci position with respect to TSS:
