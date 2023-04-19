@@ -49,8 +49,8 @@ filterLowCor <- function(Data, survival, whichData=c("expression", "dnam"),
         stop("Columns of ",whichData," data are different from rows of survival for ", 
              event, " patients!")
     }       
-    corTime <- stats::cor(t(Data[, common]), as.numeric(deathTime[common]),
-                          method="spearman", use="everything")
+    corTime <- suppressWarnings(stats::cor(t(Data[, common]), as.numeric(deathTime[common]),
+                                           method="spearman", use="everything"))
     colnames(corTime) <- "Time"
     naCorTime <- sum(is.na(corTime))
     message.if(paste(naCorTime, "entities with NA correlation to survival \n", 
@@ -73,8 +73,8 @@ filterLowCor <- function(Data, survival, whichData=c("expression", "dnam"),
                    "removed because of NA in vital status \n"), verbose=verbose)
 
     ## The correlation between loci and vital status:
-    corVital <- stats::cor(t(Data[, names(sample2vital)]), sample2vital,
-                           method="spearman", use="everything")
+    corVital <- suppressWarnings(stats::cor(t(Data[, names(sample2vital)]), sample2vital,
+                           method="spearman", use="everything"))
     colnames(corVital) <- "Vital"
     naCorVital <- sum(is.na(corVital))
     message.if(paste(naCorVital, "entities with NA correlation to vital status \n",

@@ -96,7 +96,7 @@ installed from \Bioconductor{} by using following commands in R:
 \texttt{if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")}
 \newline
-\texttt{BiocManager::install("iNETgrate")}
+\texttt{BiocManager::install("habilzare/iNETgrate")}
 
 Alternatively, if the source code is already available,
 the package can be installed by the following command in Unix:
@@ -373,7 +373,7 @@ If you want to infer the selected eigengenes in an independent dataset for valid
 the \Rfunction{bestInetgrator} can be used to extract the weights in an organized list,
 which then can be used by the \Rfunction{inferEigengenes} function. 
 
-<<inetgrator, eval=FALSE>>=
+<<inetgrator, eval=TRUE>>=
 inetgrator <- bestInetgrator(bestPvalues=s1$bestPvalues, 
                   usefuLoci=computedEloci$usefuLoci,
                   lociPigen=computedEloci$lociPigen,
@@ -386,7 +386,7 @@ the  \Biocpkg{Pigengene}::\Rfunction{get.enriched.pw} function.
 For each selected module, a folder will be created, which includes an Excel file listing the
 pathways that are overrepresented by the genes in the corresponding module.
 
-<<pathway_analysis, eval=FALSE>>=
+<<pathway_analysis, eval=TRUE>>=
 selectedModules <- names(inetgrator$modules)
 geneList <- list()
 for(m1 in selectedModules)
