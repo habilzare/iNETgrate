@@ -69,11 +69,11 @@ analyzeSurvival(survival, event="Dead", Labels, Data=NULL,
 
   \item{eOrMs}{
     A character vector to determine which eigengenes (already stored at \code{netPath}) 
-    to be used as input data for analyzeSurvival.
+    to be used as input data.
     E.g., \code{c("m", "e", "em")}, where "e" means
     "only gene expression", "m" means "DNA methylation", and "em" means
     the combination of both data types is used to compute an eigengene
-    for a module.}
+    for a module. See the note below.}
 
   \item{time2day}{
     A numeric value that aids calculating survival time (in days). E.g., If the "Time" 
@@ -147,6 +147,16 @@ Therneau, T.M., Grambsch, P.M., (2000). Modeling Survival Data: Extending the
 Cox Model. \emph{Springer, New York. ISBN 0-387-98784-3}.
 }
 
+\note{
+  If \code{computeEigengene} is ran with \code{genExpr=NULL},
+  then "e" and "em" cannot be used here.
+  Similarly, if \code{computeEigengene(eigenloci=NULL, ...)},
+  then "m" and "em" cannot be used here.
+  If in the next step of the analysis the eigengenes will be combined
+  in a linear combination (common), then the "em" eigengene is redundant
+  and not needed.
+}
+
 \seealso{
 \code{\link{makeNetwork}}, \code{\link{computeEigengenes}},
 \code{\link{prepareSurvival}}, \code{\link{inferEigengenes}}, 
@@ -173,6 +183,7 @@ madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             outPath=netPath, verbose=1)
 
 ## Compute eigengenes:
+## More samples maybe included if eigenloci=NULL below. See the note in ?computeEigengenes.
 eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 

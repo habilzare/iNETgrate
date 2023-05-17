@@ -4,10 +4,12 @@
 \title{Cleans DNA methylation data}
 
 \description{
-    Removes any loci with all missing beta values and imputes data for any loci that
-    has less than 50 percent missing beta values. Also, it identifies and removes
+    Removes any loci with more than 50\%  missing beta values and
+    imputes data for any locus that has less than 50 percent missing
+    beta values (i.e., \code{NA}s are replaced with the mean of the
+    corresponding locus).  Also, it identifies and removes
     loci that are identified as non-CpG, have Single Neucleotide Polymorphism
-    (SNPs), and have missing chromosome information.}
+    (SNPs), or have missing chromosome information.}
 
 \usage{
 preprocessDnam(rawDnam, rawDnamSampleInfo=NULL, savePath, annLib="Auto", verbose=0)
@@ -42,7 +44,8 @@ patient IDs, and values are dnam beta values. In case \code{rawDnam} is of class
 \code{SummarizedExperiment}, it is assumed that sample information is a
 part of \code{rawDnam} and hence, \code{rawDnamSampleInfo} can be set to
 \code{NULL}. Otherwise \code{rawDnamSampleInfo} input is needed to get
-an appropriate sampleInfo output.}
+an appropriate sampleInfo output.
+}
 
 \value{
 A list with following components:

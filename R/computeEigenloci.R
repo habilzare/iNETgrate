@@ -67,7 +67,7 @@ computeEigenloci <- function(dnam, locus2gene, geNames=NULL, Labels,
         if(length(loci1)==0)
             stop("No locus is available for ", g1)
         if((i1 %% 100) ==0){
-            message.if(paste(g1, i1, "th out of", numG, ". Number of its loci:", 
+            message.if(paste(g1, i1, "th out of ", numG, ". Number of its loci:", 
                            length(loci1), "\n"), verbose=verbose)
         }
         ##trim

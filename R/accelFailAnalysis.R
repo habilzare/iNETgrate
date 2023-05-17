@@ -175,6 +175,8 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
         
         ## Make predictions and find good cutoffs
         predictI <- predict(fitI, type=predType, newdata=as.data.frame(trainD))
+        if(any(is.na(predictI)))
+            stop("NA predicted for a case!")
         doRisk <- FALSE
         if(is.null(until)){
             riskLabels <- as.character(survival[, riskCol])

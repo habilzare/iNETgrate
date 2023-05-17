@@ -11,7 +11,7 @@
 \usage{
 distanceToTss(usefuLoci, locus2oneGene, genesColName="Gene_Symbol", 
                         coordinatesColName="Genomic_Coordinate", 
-                        lociColName="probeID", verbose=0)}
+                        lociColName="probeID", doWarn=FALSE, verbose=0)}
 
 \arguments{
   \item{usefuLoci}{
@@ -33,6 +33,10 @@ distanceToTss(usefuLoci, locus2oneGene, genesColName="Gene_Symbol",
   \item{lociColName}{
     A name of the column in the \code{locus2oneGene} dataframe that contains loci names.
     Default set to "probeID".}
+
+  \item{doWarn}{
+    Logical determining warnings should be issued if some gene symbols
+    were not found.}
 
   \item{verbose}{
     A numeric value that can set verbosity level. Default = 1 indicates minimal

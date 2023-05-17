@@ -1,11 +1,11 @@
 analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL, 
-                              excludeSamples=rownames(survival)[as.numeric(survival[, "Time"])<=0],
-                              mus, netPath, outPath,
-                              favRisk="High", subSet=NULL, doCox=TRUE, 
-                              eOrMs="e", time2day=1, until=1,
-                              xmax1=max(survival[, "Time"])*(time2day/365), xmin1=0,
-                              minRecall4L=0.2, minRecall4H=0.05,
-                              verbose=0, doDebug=FALSE){
+                            excludeSamples=rownames(survival)[as.numeric(survival[, "Time"])<=0],
+                            mus, netPath, outPath,
+                            favRisk="High", subSet=NULL, doCox=TRUE, 
+                            eOrMs="e", time2day=1, until=1,
+                            xmax1=max(survival[, "Time"])*(time2day/365), xmin1=0,
+                            minRecall4L=0.2, minRecall4H=0.05,
+                            verbose=0, doDebug=FALSE){
     ## It performs Cox analysis and AFT (based on e.g., the eigengenes from
     ## the combined network of dnam and expr data)
     ## Inputs:
@@ -84,7 +84,17 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
         if(!is.null(netPath)){ ## Load the eigengenes and cbind them if needed.
             muPath <- file.path(netPath, paste0("mu", mu))
             coxData <- c()##cbind all the above matrices. "e", "m", "em".
+            ## em eigengene = (1-mu) e + mu m
             for(eOrM in eOrMs){
+                ## We do not want repeated redundant eigengenes
+                if(eOrM=="em"){
+                    if(mu==0 & "e" %in% eOrMs)
+                        next
+                    ##^ For mu=0, the em eigengene would be equal to the e eigengene. 
+                    if(mu==1 & "m" %in% eOrMs)
+                        next
+                    ##^ For mu=1, the em eigengene would be equal to the m eigengene.
+                }
                 fileIn <- file.path(muPath,  paste0("Pigen_", eOrM), "eigengenes.RData")
                 eigengenes <- get(load(file=fileIn, verbose=TRUE)) ##eigengenes
                 ##^each file has a matrix of eigengenes for dnam, expr, dnam&expr
@@ -98,7 +108,7 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
         message.if(verbose=verbose-2, paste(dim(coxData), collapse="*"))
         ## Rearrange input matrix as an input for coxAnalysis
         coxData <- coxData[rownames(coxData) %in% keepSamples, , drop=FALSE]
-        message.if(verbose=verbose-2, paste("Dim of original coxData after keeping only ",
+        message.if(verbose=verbose-2, paste("Dim of coxData after keeping only ",
                                             length(keepSamples),
                                             "samples with >0 time data."))
         message.if(verbose=verbose-2, paste(dim(coxData), collapse="*"))
@@ -135,7 +145,7 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
         selectedModules <- bestModules[seq_len(min(3, length(bestModules)))]
         sampleData <- data.frame(coxData[, selectedModules, drop=FALSE], "time"=inputTime, "event"=inputEvent)
         names(sampleData) <- make.names(names(sampleData))
-       
+        
         yAllSamples <- Surv(time=inputTime, event=inputEvent, type="right")
         right1 <- paste(make.names(colnames(coxData[, selectedModules, drop=FALSE])), collapse="+")
         formulaI <- as.formula(paste("yAllSamples ~", right1))
@@ -168,9 +178,9 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
 
         ## QC:
         if(!all(unique(Labels) %in% c("High", "Int", "Low")))
-           stop("Labels values must be High, Int, or Low!")
+            stop("Labels values must be High, Int, or Low!")
         if(any(! rownames(coxData) %in% names(Labels)))
-           stop("Row names of Data must be a subset of names of Labels. Some samples have no Labels!")
+            stop("Row names of Data must be a subset of names of Labels. Some samples have no Labels!")
         survivalCox <- cbind(survival[rownames(coxData), , drop=FALSE], Risk=Labels[rownames(coxData)])
         if(doDebug){
             message.if(verbose=verbose-1, "Run AFT?")
@@ -229,4 +239,4 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
                 afts=afts,
                 aftPaths=aftPaths,
                 timeTaken=timeTaken))
-    }
+}

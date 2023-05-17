@@ -1,7 +1,7 @@
 computeEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
                                 Labels, Label1, Label2, mus, combiningMu=NA,
-                                survival, event="Dead", doIgnoreNas=FALSE, verbose=0, 
-                                mu2modules){
+                                survival, event="Dead", doIgnoreNas=FALSE, 
+                                mu2modules, doWarn=TRUE, verbose=0){
     ## Computes eigengenes (features) for expr values and dnam levels.
     ## Input:
     ## genExpr: A matrix which rows are genes, cols are patients and values are gene expression values.
@@ -41,7 +41,9 @@ computeEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
     ## The eigengenes will be computed based on (1-lCombine)*expr+lCombine*dnam
     ## e.g., if lCombine=c("e"=0, "m"=1, "em"=0.6), the above formula will be computed 3 times.
     lCombine <- c()
-    warning("Do we really need e and m? Could we instead just use em0 and em1 for simplification?!")
+    ## If in the next step of the analysis, the eigengenes will be combined in a linear model
+    ## (common), then the em eigengene is redundant and not needed.
+    
     ## Naming combiningMu
     names(combiningMu) <- paste0("em", combiningMu)
     names(combiningMu)[names(combiningMu)=="emNA"] <- "em" ##e.g., for when combiningMu=NA.
@@ -58,13 +60,15 @@ computeEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
         genExprS <- scale(genExpr[patients, geNames])
         lCombine <- c(lCombine, "e"=0)
     }
-    if(!is.null(eigenlociS)& !is.null(genExprS)){
+    ## If both eigenlociS and genExprS are provided,
+    ##restrict every thing to the overlap. 
+    if(!is.null(eigenlociS) & !is.null(genExprS)){
         patients <- intersect(rownames(eigenlociS), rownames(genExprS))
         eigenlociS <- eigenlociS[patients, geNames]
         genExprS <- genExprS[patients, geNames]
         lCombine <- c(lCombine, combiningMu)
-        totalNum <- max(rownames(eigenlociS), rownames(genExprS))
-        if(length(patients) < totalNum)
+        totalNum <- length(unique(union(rownames(eigenlociS), rownames(genExprS))))
+        if(length(patients) < totalNum & doWarn)
             warning("Computing combined eigengene is possible for only ",
                     length(patients), " out of ", totalNum, 
                     "patients, as some cases do not have expr or dnam data!")
@@ -117,7 +121,8 @@ computeEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
                     stop("There are ", length(naGenes), " genes with NA values!")
                 } else {
                     Data1 <- Data1[,!(colnames(Data1) %in% naGenes)]
-                    warning(length(naGenes), " genes with NA values were removed.")
+                    if(doWarn)
+                        warning(length(naGenes), " genes with NA values were removed.")
                 }
             }
             pigengenes <- compute.pigengene(Data=Data1, Labels=mainGroup,

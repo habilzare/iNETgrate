@@ -1,16 +1,17 @@
 \name{computeEigengenes}
 \alias{computeEigengenes}
+\alias{computEigengloci rename}
 
 \title{Compute eigengenes of combined modules.}
 \description{
-    Computes eigengenes (features) for network modules obtained from expression and
-    dnam data combined.}
+  Computes eigengenes (features) for network modules obtained from expression and
+  dnam data combined.}
 
 \usage{
 computeEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
-                    Labels, Label1, Label2, mus, combiningMu=NA,
-                    survival, event="Dead", doIgnoreNas=FALSE, verbose=0, 
-                    mu2modules)
+                 Labels, Label1, Label2, mus, combiningMu=NA,
+                 survival, event="Dead", doIgnoreNas=FALSE,
+                 mu2modules, doWarn=TRUE, verbose=0)
 }
 
 \arguments{
@@ -20,9 +21,10 @@ computeEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
 
   \item{eigenloci}{
     A matrix of eigenloci where row names are patient IDs, and column names are 
-    gene IDs.}
-
-  \item{netPath}{
+    gene IDs. Set this to \code{NULL} if you do not want to compute
+    eigengenes using DNA methylation data. See Note.}
+  
+   \item{netPath}{
     A string that determines the path to a folder where output object
     \code{combinedNetwork} is saved.}
 
@@ -64,13 +66,15 @@ computeEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
   \item{doIgnoreNas}{
     A Boolean with a default value of \code{False}.}
 
-  \item{verbose}{
-    An integer level of verbosity. 0 means silent, and higher values produce more 
-    details of the computation.}
-
   \item{mu2modules}{
     A matrix where rows are mus and values are module information. It is an 
     output of \code{\link{makeNetwork}} function.}
+  
+  \item{doWarn}{
+    Logical determining warnings should be issued.}
+\item{verbose}{
+    An integer level of verbosity. 0 means silent, and higher values produce more 
+    details of the computation.}
 }
 
 \value{
@@ -88,6 +92,20 @@ A list with following components:
 Foroushani, A. \emph{et al.} (2016) Large-scale gene network analysis reveals the significance
 of extracellular matrix pathway and homeobox genes in acute myeloid leukemia: an
 introduction to the Pigengene package and its applications, \emph{BMC MedicalGenomics}.
+}
+
+\note{
+  If \code{eigenloci!=NULL},
+  eigengenes will be computed only for those cases that have both gene
+  expression and DNA methylation data, which can lead to fewer samples
+  for the subsequent analysis.
+  Because eigengenes computed using DNA methylation usually highly
+  correlate with eigengenes computed using gene expression, setting
+  \code{eigenloci=NULL} can be reasonable  in some datasets to include
+  more samples in the subsequent analysis.
+  Either way, the DNA methylation data
+  have been already used to build the network in the previous steps of
+  the iNETgrate pipeline.
 }
 
 \seealso{
@@ -109,6 +127,7 @@ madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             geNames=colnames(eigenloci), mus=c(0.6), 
                             outPath=netPath, verbose=0)
 
+## Usually eigenloci=NULL, see the note above.
 eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 

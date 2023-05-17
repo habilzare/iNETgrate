@@ -44,6 +44,8 @@ findAliveCutoff <- function (hope, time1, until, minRecall=0.2, risk="Low", Labe
         message.if(paste("The find.aline.cutoff() plots will be saved at:", 
                        dirname(resPath), "\n"), verbose=verbose)
     }
+    if(any(is.na(hope)))
+        stop("NA values in hope!")
     for(ind in seq_along(hope)){
         cutoff <- hope[ind]
         message.if(paste("cutoff:", cutoff), verbose=verbose-3)

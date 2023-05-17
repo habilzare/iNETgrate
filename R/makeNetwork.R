@@ -26,11 +26,8 @@ makeNetwork <- function(genExpr, eigenloci, geNames, mus, doRemoveTOM=TRUE,
     ##QC:
     if(is.null(geNames))
         stop("geNames cannot be NULL!")
-
-    ## if(any(rownames(genExpr)!=colnames(eigenloci))){
     genExpr <- genExpr[geNames,]
     eigenloci <- eigenloci[, geNames]
-        ## }
  
     if(corMethod == "pearson"){
         corInput<-paste0("use='p', method='", corMethod, "'")
@@ -65,7 +62,6 @@ makeNetwork <- function(genExpr, eigenloci, geNames, mus, doRemoveTOM=TRUE,
     dir.create(netsPath, showWarnings=verbose>2)
     message.if(paste("makeNetwork results will be saved at:", 
                    netsPath, "\n"), verbose=verbose-1)
-
     mu2modules <- c()
     for(muValue in mus){
         message.if(paste("mu value : ", muValue), verbose=verbose-1)

@@ -1,6 +1,15 @@
 \name{NEWS}
 \title{News for \R Package \pkg{iNETgrate}}
 
+\section{Changes in version 0.99.64 (2023-05-11)}{
+  \subsection{General}{
+    \itemize{
+      \item Habil commented the installation command line in the
+      vignette.
+    }
+  }
+}
+
 \section{Changes in version 0.99.50 (2023-04-14)}{
   \subsection{General}{
     \itemize{

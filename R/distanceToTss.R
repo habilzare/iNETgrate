@@ -1,7 +1,7 @@
 distanceToTss <- function(usefuLoci, locus2oneGene,
                                     genesColName="Gene_Symbol",
                                     coordinatesColName="Genomic_Coordinate",
-                                    lociColName="probeID", verbose=0){
+                                    lociColName="probeID", doWarn=FALSE, verbose=0){
     ## Habil wrote this function to compute the distance of the input loci to the closest TSS.
     ## This function is used in plotLociTss().
     ## locus2oneGene: A data frame with the following columns:
@@ -80,8 +80,8 @@ distanceToTss <- function(usefuLoci, locus2oneGene,
     timeTaken <- Sys.time()-starTime
     result[["transcriptLen"]] <- transcriptLen
     result[["notFound"]] <- notFound
-    if(length(notFound)>0)
-        warning(length(notFound)," gene symbols were not found in distanceToTss!")
+    if(length(notFound)>0 & doWarn)
+        warning(length(notFound)," gene symbols were not found!")
     result[["timeTaken"]] <- timeTaken
     message.if(paste("Computing distance to TSS for took:", timeTaken,
                    attr(timeTaken,"units"), "\n"), verbose=verbose-3)
