@@ -215,11 +215,11 @@ clinSettings <- c("patientIDCol"="bcr_patient_barcode",
 "riskHigh"="Poor",
 "riskLow"="Favorable")
 print(clinSettings)
+@
 
-inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings, 
-                        saveDir="iNETgrateOut", mus=0.6)
-@ 
-
+See the documentation of the \Rcode{iNETgrate} function for a toy example.
+%%inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings, 
+%%                        saveDir="iNETgrateOut", mus=0.6)
 Results and figures are saved in the "iNETgrateOut" directory under the current directory.  
 For more advanced applications, the user is encouraged to analyze the data step-by-step
 and customize  the individual functions such as \Rfunction{makeNetwork} and 
