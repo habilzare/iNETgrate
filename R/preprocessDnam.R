@@ -29,7 +29,7 @@ preprocessDnam <- function(rawDnam, rawDnamSampleInfo=NULL, savePath,
     ## c1 <- class(rawDnam)
     ## If rawDnam is matrix, we prepare a SummarizedExperiment object
     if(inherits(rawDnam, "matrix")){
-        message.if(me=paste("rawDnam is the beta matrix!!\n"), verbose=verbose)
+        message.if(me=paste("rawDnam is the beta matrix.\n"), verbose=verbose)
         subAnn <- ann450k[ ,c("chr", "pos", "Name", "UCSC_RefGene_Name")]
         ##^Later this may need a fix. Not sure if all the annotation libraries
         ##have the above mentioned column names.

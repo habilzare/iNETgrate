@@ -56,7 +56,7 @@ dataPath <- file.path(tempdir(), "data", dataProject)
 dir.create(savePath)
 
 ## Downloading data
-rawData <- downloadData(dataProject=dataProject, savePath=dataPath)
+rawData <- downloaData(dataProject=dataProject, savePath=dataPath)
 
 ## Cleaning data
 print("Cleaning and preparing all data...")
@@ -72,7 +72,7 @@ cleaned <- cleanAllData(genExpr=rawData$genExpr,
                          verbose=1)
 
 ## Prepare toy data
-print("Creating sample of data!!")
+print("Creating sample of data...")
 set.seed(seed=1)
 toyData <- sampleData(Data=rawData, cleanData=cleaned, seed=1)
 toyRawAml <- toyData$rawData

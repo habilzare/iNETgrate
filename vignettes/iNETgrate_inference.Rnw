@@ -176,14 +176,13 @@ set.seed(1)
 @
 
 
-You can conveniently download the AML dataset from TCGA using the
-\Biocpkg{iNETgrate}::\Rfunction{downloadData} function.
-
 \iffalse
 You can download the AML dataset from TCGA using the following function:
+You can conveniently download the AML dataset from TCGA using the
+\Biocpkg{iNETgrate}::\Rfunction{downloaData} function.
 
-<<downloadData, eval=FALSE>>=
-tcgaAML <- downloadData(dataProject="TCGA-LAML", savePath=".")
+<<downloaData, eval=FALSE>>=
+tcgaAML <- downloaData(dataProject="TCGA-LAML", savePath=".")
 @
 \fi
 

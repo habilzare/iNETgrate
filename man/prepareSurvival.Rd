@@ -74,7 +74,7 @@ prepareSurvival(clinical, patientIDCol="bcr_patient_barcode", eventCol="vital_st
     "Time", "Risk1", and "Abnormality". The row names are the same as "PatientID".}
 
 \seealso{
-    \code{\link{downloadData}}, \code{\link{cleanAllData}},
+    \code{\link{downloaData}}, \code{\link{cleanAllData}},
     \code{\link{analyzeSurvival}}
 }
 

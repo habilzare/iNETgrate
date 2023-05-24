@@ -57,7 +57,7 @@ dir.create(dataPath, recursive=TRUE)
 print(paste("Data will be saved in:", dataPath))
 
 ## Downloading data
-rawData <- downloadData(dataProject=dataProject, savePath=dataPath)
+rawData <- downloaData(dataProject=dataProject, savePath=dataPath)
 
 ## Cleaning data
 print("Cleaning and preparing all data...")
@@ -73,7 +73,7 @@ cleaned <- cleanAllData(genExpr=rawData$genExpr,
                          verbose=1)
 
 ## Prepare toy data
-print("Creating a sample of data!!")
+print("Creating a sample of data...")
 toyData <- sampleData(Data=rawData, cleanData=cleaned, seed=1)
 
 toyCleanedAml <- toyData$cleaned

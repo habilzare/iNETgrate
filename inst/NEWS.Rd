@@ -1,6 +1,32 @@
 \name{NEWS}
 \title{News for \R Package \pkg{iNETgrate}}
 
+\section{Changes in version 0.99.74 (2023-05-24)}{
+  \subsection{General}{
+    \itemize{
+      \item Data were compressed using "xz" to save 20\% space.
+    }
+  }
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item The \code{downloaData} function is not exported anymore
+      because it is specific to the legacy TCGA data, which is no longer
+      available.
+    }
+  }
+}
+
+\section{Changes in version 0.99.70 (2023-05-23)}{
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item Habil renamed \code{downloadData} to \code{downloaData}
+      and updated the \code{data.category} argument of \code{GDCquery}. 
+      \item Habil removed the legacy option from the \code{donwlowData}
+      function because it is no longer supported by TCGAbiolinks.
+    }
+  }
+}
+
 \section{Changes in version 0.99.64 (2023-05-11)}{
   \subsection{General}{
     \itemize{

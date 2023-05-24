@@ -49,7 +49,7 @@ elected <- electGenes(genExpr=toyCleanedAml$genExpr, dnam=toyCleanedAml$dnam,
                        survival=survivalAml, savePath=tempdir(), 
                        locus2gene=toyCleanedAml$locus2gene, verbose=1)
 
-print("Computing eigenloci!!")
+print("Computing eigenloci...")
 patientLabel <- setNames(as.character(survivalAml[,"Risk1"]), nm=rownames(survivalAml))
 inBoth <- intersect(colnames(toyCleanedAml$dnam), names(patientLabel))
 computedEloci <- computeEigenloci(dnam=toyCleanedAml$dnam[ ,inBoth], 
