@@ -11,7 +11,7 @@ sampleData(Data, cleanData, numbeRow=300)}
 
 \arguments{
   \item{Data}{
-    A list of input data same as the output of \code{\link{downloaData}} function.}
+    A list of input data same as the output of \code{downloaData} function.}
 
   \item{cleanData}{
     A list of cleaned data same as the output of \code{\link{cleanAllData}} function.}
@@ -35,7 +35,7 @@ A list with following elements:
 }
 
 \seealso{
-  \code{\link{downloaData}}, \code{\link{cleanAllData}}
+  \code{downloaData}, \code{\link{cleanAllData}}
 }
 
 \examples{
