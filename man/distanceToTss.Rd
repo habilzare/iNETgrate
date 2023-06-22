@@ -44,7 +44,7 @@ distanceToTss(usefuLoci, locus2oneGene, genesColName="Gene_Symbol",
 
 }
 \details{
-In the iNETgrate package this function is called in the \code{\link{computeEigenloci}}
+In the iNETgrate package this function is called in the \code{\link{computEigenloci}}
 function. 
 }
 
@@ -60,7 +60,7 @@ A list of:
 }
 
 \seealso{
-\code{\link{computeEigenloci}}
+\code{\link{computEigenloci}}
 }
 
 \examples{

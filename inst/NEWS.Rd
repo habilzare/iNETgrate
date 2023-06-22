@@ -1,6 +1,48 @@
 \name{NEWS}
 \title{News for \R Package \pkg{iNETgrate}}
 
+\section{Changes in version 0.99.102 (2023-06-12)}{
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item In \code{prepareSurvival} and \code{cleanAllData} function,
+      the default values changes as follows: \code{riskLow="Low"} and
+      \code{riskHigh="High"}, respectively. 
+    }
+  }
+}
+
+\section{Changes in version 0.99.100 (2023-06-09)}{
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item The \code{Labels} argument is removed from \code{analyzeSurvival}.
+      and the \code{riskCol} argument is added.
+    }
+  }
+}
+
+\section{Changes in version 0.99.96 (2023-06-08)}{
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item The \code{abnormalityCol} argument is removed from \code{accelFailAnalysis}.
+      \item The \code{otherLabel} argument is removed from
+      \code{prepareSurvival} and \code{cleanAllData} functions.
+    }
+  }
+}
+
+\section{Changes in version 0.99.94 (2023-06-08)}{
+  \subsection{Changes in existing functions}{
+    \itemize{
+      \item The \code{computeEigengenes}, \code{computeEigenloci}, and
+      \code{sample2atient} functions were renamed to
+      \code{computEigengenes}, \code{computEigenloci}, and
+      \code{sample2pat}, respectively.
+      \item The \code{makeNetwork} function now saves the result for
+      each mu in a separate folder.
+    }
+  }
+}
+
 \section{Changes in version 0.99.74 (2023-05-24)}{
   \subsection{General}{
     \itemize{

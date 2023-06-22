@@ -1,4 +1,4 @@
-sample2atient <- function(sampleInfo, sampleCol="barcode", patientCol="patient", 
+sample2pat <- function(sampleInfo, sampleCol="barcode", patientCol="patient", 
                               sampleTypeCol="shortLetterCode",
                               sampleTypesIn=NULL, isFfpe=NULL, 
                               doRemoveDup=TRUE, verbose=0){

@@ -21,12 +21,12 @@ bestInetgrator(bestPvalues, usefuLoci, lociPigen, netPath, verbose=0)}
   \item{usefuLoci}{
     A list of vectors where the names are genes and the values are the
     corresponding loci that contribute to computing eigenloci. This is
-    an output of \code{\link{computeEigenloci}}.}
+    an output of \code{\link{computEigenloci}}.}
 
   \item{lociPigen}{
     A list of genes (same as \code{usefuLoci}'s genes and their related 
     Pigengene object (based on their mapped loci). This is an output of
-    \code{\link{computeEigenloci}}.}
+    \code{\link{computEigenloci}}.}
 
   \item{netPath}{
     A string determining the path to the network folder, where the pigengene and 
@@ -44,7 +44,7 @@ bestInetgrator(bestPvalues, usefuLoci, lociPigen, netPath, verbose=0)}
 
 \seealso{
   \code{\link{inferEigengenes}},
-  \code{\link{analyzeSurvival}}, \code{\link{computeEigenloci}},
+  \code{\link{analyzeSurvival}}, \code{\link{computEigenloci}},
   \code{\link{computeInetgrator}},
   \code{\link[Pigengene:pigengene]{pigengene-class}}
 }

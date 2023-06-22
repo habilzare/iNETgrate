@@ -65,9 +65,11 @@ makeNetwork <- function(genExpr, eigenloci, geNames, mus, doRemoveTOM=TRUE,
     mu2modules <- c()
     for(muValue in mus){
         message.if(paste("mu value : ", muValue), verbose=verbose-1)
+        netPath <- file.path(netsPath, paste0("mu", muValue))
+        dir.create(netPath)
         combined <- Pigengene::combine.networks(nets=list(dnamNetwork, exprNetwork),
                                                 contributions=c(muValue, 1-muValue),
-                                                midfix=muValue, outPath=netsPath,
+                                                midfix=muValue, outPath=netPath,
                                                 RsquaredCut=RsquaredCut,
                                                 minModuleSize=minModuleSize,
                                                 doRemoveTOM=doRemoveTOM,

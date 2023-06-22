@@ -1,4 +1,4 @@
-analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL, 
+analyzeSurvival <- function(survival, eventCol="Dead", riskCol="Risk1", Data=NULL, 
                             excludeSamples=rownames(survival)[as.numeric(survival[, "Time"])<=0],
                             mus, netPath, outPath,
                             favRisk="High", subSet=NULL, doCox=TRUE, 
@@ -10,9 +10,6 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
     ## the combined network of dnam and expr data)
     ## Inputs:
     ## survival: A data frame with patients on rows.
-    ##^Columns include: "Time" (in days if time2day=1), event (e.g., "Dead"), and some risk criteria.
-    ##Abnormality and Risk columns (columns that start with Risk e.g. Risk1, Risk2, ...) are
-    ##optional.
     ## time2day: Set it to 1 if the "Time" column in survival is in days. Otherwise, this is the
     ## number of days in a unit of "Time". E.g., set it to 30 if Time is in months.  
     ## mus: A vector of mu values.
@@ -29,8 +26,7 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
     ## analysis.
     ## eOrMs: A character vector that determines what data were used to compute eigengenes,
     ##^e.g., c("m", "e", "em"). It will be ignored if netPath is NULL.
-    ## Labels: A vector with only "High", "Int", and "Low" values. Names must be similar to the row
-    ## names of survival.
+    ##
     ## Output:
     ## bestPvalues:
     ## bestModules:
@@ -46,7 +42,7 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
     if(!is.null(subSet) && !(subSet %in% c("High", "Int", "Low")))
         stop("The value of subSet should be in High, Int or Low")
     class(survival[, "Time"]) <- "numeric"
-    class(survival[, event]) <- "numeric"
+    class(survival[, eventCol]) <- "numeric"
 
     ## Accelerated failure time and Cox analyses on all data
     message.if("Accelerated failure time and Cox analysis ...", verbose=verbose)
@@ -65,7 +61,7 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
     message.if(verbose=verbose-1, names(inputTime)[inputTime==0])
     inputTime <- inputTime[keepSamples]
     inputTime <- inputTime/365
-    inputEvent <- survival[keepSamples, event]
+    inputEvent <- survival[keepSamples, eventCol]
     names(inputEvent) <- keepSamples
     message.if(paste("inputEvent: \n"), verbose=verbose)
     if(verbose)
@@ -171,28 +167,32 @@ analyzeSurvival <- function(survival, event="Dead", Labels, Data=NULL,
              col='blue', main=NULL, xlab="Time (years)", ylab="Survival Probability")
         dev.off()
 
-        message.if(verbose=verbose-2, paste("AFT based on survival time and", event))
+        message.if(verbose=verbose-2, paste("AFT based on survival time and", eventCol))
         riskLevel <- c("High"="High","Low"="Low","Int"="Int")
         aftPathsL <- file.path(outPath, paste0("mu", mu),
                                paste0("survival_", pastedeOrMs))
 
         ## QC:
+        Labels <- survival[,riskCol]
+        names(Labels) <- rownames(survival)
+        ##^A vector with only "High", "Int", and "Low" values. Names must be similar to the row
+        ## names of survival.
         if(!all(unique(Labels) %in% c("High", "Int", "Low")))
-            stop("Labels values must be High, Int, or Low!")
+            stop("Values on the ", riskCol, " column of survival must be High, Int, or Low!")
         if(any(! rownames(coxData) %in% names(Labels)))
-            stop("Row names of Data must be a subset of names of Labels. Some samples have no Labels!")
-        survivalCox <- cbind(survival[rownames(coxData), , drop=FALSE], Risk=Labels[rownames(coxData)])
+            stop("Row names of Data must be a subset of row names of survival!")
+        survivalCox <- cbind(survival[rownames(coxData), , drop=FALSE],
+        Risk=Labels[rownames(coxData)])
         if(doDebug){
             message.if(verbose=verbose-1, "Run AFT?")
             
         }
-        aft <- accelFailAnalysis(survival=survivalCox, eventCol=event,
+        aft <- accelFailAnalysis(survival=survivalCox, eventCol=eventCol,
                                  time2day=time2day,
                                  Data=coxData[ ,selectedModules, drop=FALSE], xmax1=xmax1, 
                                  minRecall4L=minRecall4L, minRecall4H=minRecall4H, until=until,
                                  resultPath=aftPathsL,
                                  riskCol="Risk",
-                                 abnormalityCol=NULL,
                                  doAddConfTable=TRUE, xmin1=xmin1,
                                  risk2col=c( "Low"="green", "Int"="blue", "High"="red"),
                                  favRisk=favRisk, riskLevel=riskLevel,

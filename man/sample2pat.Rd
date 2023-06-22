@@ -1,5 +1,5 @@
-\name{sample2atient}
-\alias{sample2atient}
+\name{sample2pat}
+\alias{sample2pat}
 
 \title{Maps sample IDs to corresponding patient IDs}
 
@@ -10,7 +10,7 @@
     sample types, or duplicate samples.}
 
 \usage{
-sample2atient(sampleInfo, sampleCol="barcode", patientCol="patient", 
+sample2pat(sampleInfo, sampleCol="barcode", patientCol="patient", 
                   sampleTypeCol="shortLetterCode", sampleTypesIn=NULL, isFfpe=NULL, 
                   doRemoveDup=TRUE, verbose=0)}
 
@@ -78,7 +78,7 @@ A list with following components:
 \examples{
 data(toyRawAml)
 
-s2pExpr <- sample2atient(sampleInfo=toyRawAml$genExprSampleInfo, 
+s2pExpr <- sample2pat(sampleInfo=toyRawAml$genExprSampleInfo, 
                              sampleCol="barcode", patientCol="patient", 
                              sampleTypeCol="shortLetterCode",
                              sampleTypesIn=NULL, isFfpe=NULL, 

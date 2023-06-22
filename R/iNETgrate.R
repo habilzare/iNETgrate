@@ -24,15 +24,12 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
     if(!inherits(clinSettings, "character"))
         stop("clinSettings must be a named vector!")
     cliNames <- c("patientIDCol","eventCol", "timeCol", "riskCatCol",
-                  "riskFactorCol", "event", "otherLabel", "riskHigh", "riskLow")
+                  "riskFactorCol", "event", "riskHigh", "riskLow")
     if(any(! cliNames %in% names(clinSettings)))
         stop("Please refer to documentation for expected names of clinSettings!")
     ##if(length(clinSettings) != length(cliNames))
     ##    stop("Please add names for every component of the vector!")
     ##^ More names is OK, Habil.
-    otherLabel <- clinSettings["otherLabel"]
-    if(otherLabel=="NULL")
-        otherLabel <- NULL
     if(length(grep(saveDir, pattern=" ")>0))
         stop("saveDir cannot have space!")
 
@@ -47,7 +44,6 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
                              annLib=annLib, clinical=Data$clinical, 
                              riskCatCol=clinSettings["riskCatCol"], 
                              riskFactorCol=clinSettings["riskFactorCol"], 
-                             otherLabel=otherLabel, 
                              riskHigh=clinSettings["riskHigh"], 
                              riskLow=clinSettings["riskLow"], 
                              patientIDCol=clinSettings["patientIDCol"], 
@@ -75,7 +71,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
                verbose=verbose)
     results[["Labels"]] <- LabelsIn
 
-    computedEloci <- computeEigenloci(dnam=cleaned$dnam[ ,inBoth], 
+    computedEloci <- computEigenloci(dnam=cleaned$dnam[ ,inBoth], 
                                        geNames=elected$unionGenes,
                                        locus2gene=cleaned$locus2gene, 
                                        Labels=LabelsIn, plotPath=saveDir,
@@ -101,7 +97,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
     ## Get Eigengenes
     message.if("Step 5/7: Computing eigengenes...", verbose=verbose)
-    eigenGenes <- computeEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
+    eigenGenes <- computEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
                                       netPath=netPath, geNames=elected$unionGenes,
                                       Labels=patientLabel, Label1=Label1, 
                                       Label2=Label2, mus=mus,
@@ -119,7 +115,7 @@ iNETgrate <- function(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
                verbose=verbose)
 
     survivalAnalysed <- analyzeSurvival(survival=cleaned$survival, 
-                                          Labels=patientLabel, favRisk=favRisk, 
+                                          favRisk=favRisk, 
                                           subSet=subSet, mus=mus, 
                                           netPath=netPath, outPath=survivalPath,
                                           doCox=doCox, eOrMs=eOrMs,

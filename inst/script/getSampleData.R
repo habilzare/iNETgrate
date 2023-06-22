@@ -63,7 +63,7 @@ cleaned <- cleanAllData(genExpr=downloaded$genExpr,
                          rawDnam=downloaded$rawDnam, savePath=savePath, 
                          annLib="Auto", clinical=downloaded$clinical, 
                          riskCatCol=riskCatCol, riskFactorCol=riskFactorCol, 
-                         riskHigh="Poor", riskLow="Favorable", otherLabel=NULL, 
+                         riskHigh="Poor", riskLow="Favorable", 
                          verbose=1)
 
 print("Cleaning data done.")
@@ -81,7 +81,7 @@ cleanToy <- cleanAllData(genExpr=rawS$genExpr,
                           rawDnam=rawS$rawDnam, savePath=savePath, 
                           annLib="Auto", clinical=rawS$clinical, 
                           riskCatCol=riskCatCol, riskFactorCol=riskFactorCol, 
-                          riskHigh="Poor", riskLow="Favorable", otherLabel=NULL, 
+                          riskHigh="Poor", riskLow="Favorable", 
                           verbose=1)
 
 print("Electing genes...")
@@ -93,7 +93,7 @@ print("Computing eigenloci...")
 patientLabel <- setNames(as.character(cleanToy$survival$Risk1),
                          nm=rownames(cleanToy$survival))
 inBoth <- intersect(colnames(cleanToy$dnam), names(patientLabel))
-computedEloci <- computeEigenloci(dnam=cleanToy$dnam[ ,inBoth], 
+computedEloci <- computEigenloci(dnam=cleanToy$dnam[ ,inBoth], 
                                    geNames=elected$unionGenes,
                                    locus2gene=cleanToy$locus2gene, 
                                    Labels=patientLabel[names(patientLabel) %in% inBoth], 
@@ -112,7 +112,7 @@ madeNetwork <- makeNetwork(genExpr=cleanToy$genExpr, eigenloci=eigenloci,
                             doReturNetworks=FALSE,  RsquaredCut=0.75, 
                             verbose=1)
 
-eGenes <- computeEigengenes(genExpr=cleanToy$genExpr, eigenloci=eigenloci, 
+eGenes <- computEigengenes(genExpr=cleanToy$genExpr, eigenloci=eigenloci, 
                               netPath=netPath, geNames=elected$unionGenes,
                               Labels=patientLabel, Label1="High", Label2="Low", 
                               mus=c(0.6), combiningMu=NA, 

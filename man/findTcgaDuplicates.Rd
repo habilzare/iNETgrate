@@ -57,7 +57,7 @@ A list with following components:
 }
 
 \seealso{
-\code{\link{sample2atient}}
+\code{\link{sample2pat}}
 }
 
 \examples{

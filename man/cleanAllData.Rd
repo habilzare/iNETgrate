@@ -7,7 +7,7 @@
     \code{\link{preprocessDnam}} and
     \code{\link{prepareSurvival}} functions to preprocess and impute DNA methylation 
     and clinical data respectively. It also creates the
-    \code{\link{sample2atient}} mappings for gene expression and DNA
+    \code{\link{sample2pat}} mappings for gene expression and DNA
     methylation data.}
 
 \usage{
@@ -16,7 +16,7 @@ cleanAllData(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=NULL,
               sampleTypesIn=NULL, savePath, isFfpe=c(FALSE), annLib="Auto",
               clinical, patientIDCol="bcr_patient_barcode", eventCol="vital_status", 
               event="Dead", timeCol="days_to_last_followup", riskFactorCol,
-              riskCatCol=NULL, riskHigh=NULL, riskLow=NULL, otherLabel=NULL, verbose=0)
+              riskCatCol=NULL, riskHigh="High", riskLow="Low", verbose=0)
 }
 
 \arguments{
@@ -105,9 +105,6 @@ cleanAllData(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=NULL,
     A character vector that describes low risk group of patients in clinical data. 
     See section "Details".}
 
-  \item{otherLabel}{
-    A vector of other risk levels where names are the same as row names of clinical data.}
-
   \item{verbose}{
     An integer that sets the level of verbosity. \code{0} means silent, and higher values produce 
     more details of the computation.}
@@ -124,7 +121,7 @@ cleanAllData(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=NULL,
 \value{
 A list with following components:
   \item{survival}{A data frame with a minimum of five columns namely: "PatientID", 
-                  \code{event}, "Time", "Risk1", and "Abnormality". 
+                  \code{event}, "Time", "Risk1", and \code{riskFactorCol}. 
                   The row names are the same as "PatientID".}
   \item{genExpr}{A data frame of gene expression data where rows are genes and 
                  columns are (tagged) patient IDs.}
@@ -139,7 +136,7 @@ A list with following components:
 
 \seealso{
 \code{\link{prepareSurvival}}, \code{\link{preprocessDnam}}, 
-\code{\link{sample2atient}}
+\code{\link{sample2pat}}
 }
 
 \examples{

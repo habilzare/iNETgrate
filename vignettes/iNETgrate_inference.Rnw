@@ -209,7 +209,6 @@ clinSettings <- c("patientIDCol"="bcr_patient_barcode",
 "timeCol"="days_to_last_followup",
 "riskCatCol"="acute_myeloid_leukemia_calgb_cytogenetics_risk_category",
 "riskFactorCol"="cytogenetic_abnormalities",
-"otherLabel"="NULL",
 "event"="Dead",
 "riskHigh"="Poor",
 "riskLow"="Favorable")
@@ -222,7 +221,7 @@ See the documentation of the \Rcode{iNETgrate} function for a toy example.
 Results and figures are saved in the "iNETgrateOut" directory under the current directory.  
 For more advanced applications, the user is encouraged to analyze the data step-by-step
 and customize  the individual functions such as \Rfunction{makeNetwork} and 
-\Rfunction{computeEigengenes}.
+\Rfunction{computEigengenes}.
 
 \subsection{Running the \inet pipeline step by step}
 If you are curious about the specific steps in the \inet pipeline, or you need to run some steps
@@ -257,7 +256,7 @@ cleanedToy <- cleanAllData(genExpr=toyRawAml$genExpr,
                             clinical=toyRawAml$clinical, 
                             riskCatCol=riskCatCol, riskFactorCol=riskFactorCol, 
                             riskHigh="Poor", riskLow="Favorable", 
-                            otherLabel=NULL, verbose=1)
+                            verbose=1)
 @
 
 The output must be saved by the user if they intent to use the cleaned data later.
@@ -306,7 +305,7 @@ compute eigenloci described earlier.
 patientLabel <- setNames(as.character(cleaned$survival$Risk1),
                          nm=rownames(cleaned$survival))
 inBoth <- intersect(colnames(cleaned$dnam), names(patientLabel))
-computedEloci <- computeEigenloci(dnam=cleaned$dnam[ ,inBoth],
+computedEloci <- computEigenloci(dnam=cleaned$dnam[ ,inBoth],
     Labels=patientLabel[inBoth],
     geNames=elected$unionGenes,
     locus2gene=cleaned$locus2gene,
@@ -344,7 +343,7 @@ The next step is to compute  a representative value (feature) for each identifie
 (i.e., an eigengene) based on gene expression and optionally, DNA methylation data. 
 
 <<combining_eigengenes, eval=TRUE>>=
-e1 <- computeEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
+e1 <- computEigengenes(genExpr=cleaned$genExpr, eigenloci=eigenloci, 
                           netPath=netPath, geNames=elected$unionGenes,
                           Labels=patientLabel, Label1="Low", 
                           Label2="High", mus=c(0.6), combiningMu=NA,
@@ -363,7 +362,7 @@ into different risk categories.
 
 <<analyzeSurvival, fig.width=12, fig.height=8, eval=TRUE>>=
 s1 <- analyzeSurvival(survival=cleaned$survival, 
-                        Labels=patientLabel, favRisk="High", 
+                        favRisk="High", 
                         subSet="Int", mus=0.6, 
                         netPath=netPath, outPath=survivalPath, 
                         xmax1=15, xmin1=0, verbose=1)

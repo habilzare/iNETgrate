@@ -34,7 +34,7 @@ iNETgrate(Data, clinSettings, mus=(0:10)/10, saveDir="iNETgrate",
 
   \item{clinSettings}{
     A vector where names are "patientIDCol", "eventCol", "timeCol", "riskCatCol", 
-    "riskFactorCol", "otherLabel", "event", "riskHigh", and "riskLow", and the 
+    "riskFactorCol", "event", "riskHigh", and "riskLow", and the 
     values are the corresponding information from the clinical data. In particular, 
     values for a name ending in "Col" must be the corresponding column name in
     the clinical dataframe e.g., "patientIDCol" in the name of the
@@ -208,7 +208,7 @@ Hierarchical Clustering. \emph{Journal of Statistical Software}, \bold{46(11),1-
 \seealso{
 \code{\link[WGCNA:pickSoftThreshold]{pickSoftThreshold}},
 \code{\link{cleanAllData}}, \code{\link{electGenes}},
-\code{\link{makeNetwork}}, \code{\link{computeEigengenes}},
+\code{\link{makeNetwork}}, \code{\link{computEigengenes}},
 \code{\link{bestInetgrator}}, \code{\link{analyzeSurvival}},
 \code{\link{toyRawAml}}
 }
@@ -228,7 +228,6 @@ clinSettings <- c("patientIDCol"="bcr_patient_barcode",
 "timeCol"="days_to_last_followup",
 "riskCatCol"="acute_myeloid_leukemia_calgb_cytogenetics_risk_category",
 "riskFactorCol"="cytogenetic_abnormalities",
-"otherLabel"="NULL",
 "event"="Dead",
 "riskHigh"="Poor",
 "riskLow"="Favorable")

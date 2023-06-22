@@ -68,7 +68,7 @@ cleaned <- cleanAllData(genExpr=rawData$genExpr,
                          rawDnam=rawData$rawDnam, savePath=dataPath, 
                          annLib="Auto", clinical=rawData$clinical, 
                          riskCatCol=riskCatCol, riskFactorCol=riskFactorCol, 
-                         riskHigh="Poor", riskLow="Favorable", otherLabel=NULL, 
+                         riskHigh="Poor", riskLow="Favorable", 
                          verbose=1)
 
 ## Prepare toy data

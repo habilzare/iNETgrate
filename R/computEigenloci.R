@@ -1,4 +1,4 @@
-computeEigenloci <- function(dnam, locus2gene, geNames=NULL, Labels,
+computEigenloci <- function(dnam, locus2gene, geNames=NULL, Labels,
                               Label1, Label2, plotPath=NULL, genesColName="Gene_Symbol",
                               coordinatesColName="Genomic_Coordinate",
                               lociColName="probeID",dnamGene=NULL,

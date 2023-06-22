@@ -28,11 +28,11 @@ importFrom(tidyselect, all_of)
 importFrom(BiocStyle, latex)
 
 ## Exports:
-exportPattern(accelFailAnalysis, bestInetgrator, computeEigengenes, computeInetgrator,
+exportPattern(accelFailAnalysis, bestInetgrator, computEigengenes, computeInetgrator,
               computeUnion, coxAnalysis, filterLowCor, findAliveCutoff,
               findCore, makeNetwork, plotKM, findTcgaDuplicates,
               analyzeSurvival, prepareSurvival, plotLociTss, 
               plotLociNum, distanceToTss, sampleData,
-              computeEigenloci, cleanAllData, preprocessDnam, iNETgrate,
-              sample2atient, electGenes, inferEigengenes, createLocusGene) 
+              computEigenloci, cleanAllData, preprocessDnam, iNETgrate,
+              sample2pat, electGenes, inferEigengenes, createLocusGene) 
 ##downloaData needs to be adopted with non-legacy data.

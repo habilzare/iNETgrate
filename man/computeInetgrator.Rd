@@ -17,7 +17,7 @@ computeInetgrator(mu, usefuLoci, genePigens, lociPigen, moMe)}
   \item{usefuLoci}{
     A list of vectors where the names are genes and the values are the corresponding
     loci that contribute to computing eigenloci. This is an output of
-    \code{\link{computeEigenloci}}.}
+    \code{\link{computEigenloci}}.}
 
   \item{genePigens}{
     A list of pigengenes objects with names from
@@ -26,7 +26,7 @@ computeInetgrator(mu, usefuLoci, genePigens, lociPigen, moMe)}
 
   \item{lociPigen}{
     A list of Pigengene object named with genes in the same way as in
-    \code{usefuLoci}. This is an output of \code{\link{computeEigenloci}}.}
+    \code{usefuLoci}. This is an output of \code{\link{computEigenloci}}.}
 
   \item{moMe}{
     A character vector of the selected eigengenes to be used 
@@ -51,7 +51,7 @@ A list with following components:
 }
 
 \seealso{   
-\code{\link{computeEigenloci}}, \code{\link{bestInetgrator}}, 
+\code{\link{computEigenloci}}, \code{\link{bestInetgrator}}, 
 \code{\link[Pigengene:pigengene]{pigengene-class}} 
 }
 

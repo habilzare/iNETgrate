@@ -10,7 +10,7 @@
     using the selected modules.}
 
 \usage{
-analyzeSurvival(survival, event="Dead", Labels, Data=NULL,
+analyzeSurvival(survival, eventCol="Dead", riskCol="Risk1", Data=NULL,
                   excludeSamples=rownames(survival)[as.numeric(survival[,"Time"])<=0],
                   mus, netPath, outPath, favRisk="High", subSet=NULL,
                   doCox=TRUE, eOrMs="e", time2day=1, until=1,
@@ -20,17 +20,19 @@ analyzeSurvival(survival, event="Dead", Labels, Data=NULL,
 
 \arguments{
   \item{survival}{
-    A matrix or a data frame with at least five columns: "PatientID", 
-    "Time", "Risk1", "Abnormality", and  \code{event} (see the
-    \code{event} argument). The row names are the same as "PatientID".}
+    A matrix or a data frame with at least four columns: "PatientID", 
+    "Time", \code{event}, and \code{riskCol}
+    (see the \code{event} and \code{riskCol} arguments).
+    The row names are the same as "PatientID".}
 
-  \item{event}{
-    A string that determines the event column of survival data frame.}
+  \item{eventCol}{
+    The name of the event column in the \code{survival} data.
+    Values in this column must be 0 or 1
+    (Alternatively, \code{TRUE} and \code{FALSE} values are also supported.)}
 
-  \item{Labels}{
-    A named character vector that determines the risk group for each patient. Here,
-    names are patient IDs and values are the risk group labels that comprises
-    "High", "Int", and "Low".}
+  \item{riskCol}{
+    The name of the risk column in the \code{survival} data. Values in this
+    column must be "High", "Int", or "Low".}
 
   \item{Data}{
     The feature matrix, e.g., patients on rows and eigengenes on columns. Exactly one of
@@ -47,7 +49,7 @@ analyzeSurvival(survival, event="Dead", Labels, Data=NULL,
     
   \item{netPath}{
     A character string describing path to saved output from
-    \code{\link{makeNetwork}} and \code{\link{computeEigengenes}} functions. 
+    \code{\link{makeNetwork}} and \code{\link{computEigengenes}} functions. 
      Exactly one of \code{netPath} or \code{Data} must not be \code{NULL}.}
 
   \item{outPath}{
@@ -148,9 +150,9 @@ Cox Model. \emph{Springer, New York. ISBN 0-387-98784-3}.
 }
 
 \note{
-  If \code{computeEigengene} is ran with \code{genExpr=NULL},
+  If \code{computEigengene} is ran with \code{genExpr=NULL},
   then "e" and "em" cannot be used here.
-  Similarly, if \code{computeEigengene(eigenloci=NULL, ...)},
+  Similarly, if \code{computEigengene(eigenloci=NULL, ...)},
   then "m" and "em" cannot be used here.
   If in the next step of the analysis the eigengenes will be combined
   in a linear combination (common), then the "em" eigengene is redundant
@@ -158,7 +160,7 @@ Cox Model. \emph{Springer, New York. ISBN 0-387-98784-3}.
 }
 
 \seealso{
-\code{\link{makeNetwork}}, \code{\link{computeEigengenes}},
+\code{\link{makeNetwork}}, \code{\link{computEigengenes}},
 \code{\link{prepareSurvival}}, \code{\link{inferEigengenes}}, 
 \code{\link{accelFailAnalysis}}, \code{\link{plotKM}}
 }
@@ -183,8 +185,8 @@ madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             outPath=netPath, verbose=1)
 
 ## Compute eigengenes:
-## More samples maybe included if eigenloci=NULL below. See the note in ?computeEigengenes.
-eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
+## More samples maybe included if eigenloci=NULL below. See the note in ?computEigengenes.
+eigengenes <- computEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 
                                   Label1="Low", Label2="High", 
@@ -192,18 +194,15 @@ eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr,
                                   mu2modules=madeNetwork$mu2modules)
 
 ## Survival analysis:
-survivalPath <- file.path(netPath, "survival")
-dir.create(survivalPath, recursive=TRUE, showWarnings=FALSE)
-
-survRes <- analyzeSurvival(survival=toyCleanedAml$survival, Labels=patientLabel,
+survRes <- analyzeSurvival(survival=toyCleanedAml$survival, 
                              favRisk="High", subSet="Int", mus=0.6, 
-                             netPath=netPath, outPath=survivalPath, 
+                             netPath=netPath, outPath=netPath, 
                              eOrMs="e", xmax1=15, xmin1=0, verbose=1)
 
 ## Getting the best inetgrator:
 bestPval <- survRes$bestPvalues ## Best p-values per mu value
 ## Alternatively, it can be read from the saved csv file:
-bestPval <- read.csv(file=file.path(survivalPath, "bestPvalues_e.csv"), header=TRUE)
+bestPval <- read.csv(file=file.path(netPath, "bestPvalues_e.csv"), header=TRUE)
 
 inetgrator <- bestInetgrator(bestPvalues=bestPval, 
                               usefuLoci=toyComputEloci$usefuLoci, 

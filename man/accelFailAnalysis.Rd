@@ -8,12 +8,12 @@
     of features (e.g., selected modules).}
 
 \usage{
-accelFailAnalysis(Data, survival, time2day, eventCol="Dead", riskCol="Risk", 
+accelFailAnalysis(Data, survival, time2day, eventCol="Dead", riskCol="Risk1", 
                   weight=NULL, minRecall4L=0.2, minRecall4H=0.1, until=10, xmin1=0,
                   xmax1=max(survival[, "Time"])*(time2day/365), predType="lp", 
                   doTitle=TRUE, resultPath, 
                   risk2col=c("Low"='green', "Int"='blue', "High"='red'),    
-                  abnormalityCol, doAddConfTable=FALSE, favRisk="High", 
+                  doAddConfTable=FALSE, favRisk="High", 
                   riskLevel, subSet=NULL, pvalDigits=0, 
                   ylabKm="Survival probability", verbose=0)}
 
@@ -23,8 +23,8 @@ accelFailAnalysis(Data, survival, time2day, eventCol="Dead", riskCol="Risk",
     names are features.}
 
   \item{survival}{
-    A matrix or a data frame with minimum of five columns namely: "PatientID", 
-    \code{eventCol}, "Time", "Risk1", and "Abnormality". The rownames are the 
+    A matrix or a data frame with minimum of four columns namely: "PatientID", 
+    \code{eventCol}, "Time", and \code{riskCol}. The rownames are the 
     same as "PatientID".}
    
   \item{time2day}{
@@ -32,10 +32,13 @@ accelFailAnalysis(Data, survival, time2day, eventCol="Dead", riskCol="Risk",
     column in survival is in days, time2day=1, else set it to 30 if "Time" is in months.}
 
   \item{eventCol}{
-    A string determining the event column of survival data frame.}
+    The name of the event column in the \code{survival} data.
+    Values in this column must be 0 or 1
+    (Alternatively, \code{TRUE} and \code{FALSE} values are also supported.)}
 
   \item{riskCol}{
-    A character vector determining the names of the risk columns of survival data frame.}
+    The name of the risk column in the \code{survival} data. Values in this
+    column must be "High", "Int", or "Low".}
 
   \item{weight}{
     A named numeric vector that determines the weight of each eigengene. Here, 
@@ -78,10 +81,6 @@ accelFailAnalysis(Data, survival, time2day, eventCol="Dead", riskCol="Risk",
     A named character vector, that assigns color to the risk groups in KM-plots. 
     Names must be in the \code{riskCol}, and values are colors e.g., 
     risk2col=c(High="red", Low="green", Int="blue").}
-
-  \item{abnormalityCol}{
-    A string that determines the column name in survival data that contain risk 
-    abnormality information e.g., "Abnormality".}
 
   \item{doAddConfTable}{
     Accepts a Boolean value, where \code{FALSE} (default) indicates confidence table
@@ -147,7 +146,7 @@ head(s1) ## print
 
 afOut <- accelFailAnalysis(Data=toyEigengenes, survival=s1, 
                            time2day=1, riskCol="Risk1", until=1, xmax1=15, 
-                           resultPath=tempdir(), abnormalityCol=NULL, 
+                           resultPath=tempdir(), 
                            riskLevel=c("Low"="Low", "Int"="Int", "High"="High"), 
                            subSet="Int", verbose=1)
 }

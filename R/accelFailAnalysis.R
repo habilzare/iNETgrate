@@ -1,10 +1,10 @@
 accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
-                              riskCol="Risk", weight=NULL, minRecall4L=0.2,
+                              riskCol="Risk1", weight=NULL, minRecall4L=0.2,
                               minRecall4H=0.1, until=10, xmin1=0,
                               xmax1=max(survival[, "Time"])*(time2day/365),
                               predType="lp", doTitle=TRUE, resultPath, 
                               risk2col=c("Low"='green', "Int"='blue', "High"='red'),
-                              abnormalityCol, doAddConfTable=FALSE, 
+                              doAddConfTable=FALSE, 
                               favRisk="High", riskLevel, subSet=NULL, pvalDigits=0, 
                               ylabKm="Survival probability", verbose=0){
 
@@ -26,9 +26,6 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
     ##riskCol: the col in the survival that has the risk groups, the cytogenetic col for the AML survival study
     ##favRisk : the risk group that you want to draw kmplot for their real risk level.
     ##It should be Low, High or Int.
-    ##abnormalityCol: the col in the survival that has the abnormality groups, 
-    ##the cytogenetic abnormality col for the AML survival study note requires the Surv function
-    ##^--Aamir 2017-07-05
     ## subSet: A character the determines which risk category from the survival data will be further
     ##stratified based on the predicted risk. E.g., "Int" leads to plotting the predicted risk
     ##groups for the subset of data that are intermediate risk based on survival data.  
@@ -108,8 +105,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
                      resultPath), verbose=verbose-1)
 
 
-    ## Int risk patients based on 1)cytogenetic 2)gerstung
-    ## cytogeneticInt <- rownames(survivalInput)[(survivalInput[[risk]]=="Int")]
+    ## Int risk patients based on cytogenetic 
     subsetPatients <- NULL
     if(!is.null(subSet)){
         subsetPatients <- rownames(survival)[which(survival[, riskCol]==subSet)]
@@ -286,7 +282,7 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
         }
         if(doAddConfTable){
             message.if("Adding the confusion matrix...", verbose=verbose-1)
-            ##To add kmplot based on only cytogenetics
+            ##To add kmplot based on only given risk (e.g., cytogenetics)
             toKeep <- rownames(survival[which(survival[, riskCol]%in%riskLevel), ])
             survival1 <- survival[toKeep, ]
             patientNames <- intersect(names(cond), rownames(survival1))
@@ -370,33 +366,6 @@ accelFailAnalysis <- function(Data, survival, time2day, eventCol="Dead",
                 survfitOutput <- plottedSub$survfitOutput
                 subsets[[subPowerSet]][["survfitOutput"]] <- survfitOutput
             }
-
-            ## Abnormality (e.g., cytogenetics):
-            if(!is.null(abnormalityCol)){
-                lTable <- data.frame("Low-risks"=table(survival2[realLow, abnormalityCol]))
-                lTable <- lTable[which(lTable[, "Low.risks.Freq"]!=0), ]
-                if(nrow(lTable)>0){
-                    rownames(lTable) <- NULL
-                    textplot(lTable)
-                    title("cytogenetic abnormality of Low-risks")
-                }
-                if("Int" %in% names(riskLevel)){
-                    mTable <- data.frame("Intermediate risks"=table(survival2[realInt, abnormalityCol]))
-                    mTable <- mTable[which(mTable[, "Intermediate.risks.Freq"]!=0), ]
-                    if(nrow(mTable)>0){
-                        rownames(mTable) <- NULL
-                        textplot(mTable)
-                        title("cytogenetic abnormality of intermediate risks")
-                    }
-                }
-                hTable <- data.frame("High risks"=table(survival2[realHigh, abnormalityCol]))
-                hTable <- hTable[which(hTable[, "High.risks.Freq"]!=0), ]
-                if(nrow(hTable)>0){
-                    rownames(hTable) <- NULL
-                    textplot(hTable)
-                    title("cytogenetic abnormality of High risks")
-                }
-            } ## if(!is.null(abnormalityCol))
 
             ## Assessing the improvement compared to the state-of-the-art (e.g., cytogenetic) risk:
             levels(riskLevel) <- c("Low", "Int", "High")

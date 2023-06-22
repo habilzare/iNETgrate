@@ -34,7 +34,7 @@ A list with following components:
 }
 
 \seealso{
-\code{\link{bestInetgrator}}, \code{\link{computeEigenloci}}
+\code{\link{bestInetgrator}}, \code{\link{computEigenloci}}
 }
 
 \examples{

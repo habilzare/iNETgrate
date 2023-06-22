@@ -1,5 +1,5 @@
-\name{computeEigengenes}
-\alias{computeEigengenes}
+\name{computEigengenes}
+\alias{computEigengenes}
 \alias{computEigengloci rename}
 
 \title{Compute eigengenes of combined modules.}
@@ -8,7 +8,7 @@
   dnam data combined.}
 
 \usage{
-computeEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
+computEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
                  Labels, Label1, Label2, mus, combiningMu=NA,
                  survival, event="Dead", doIgnoreNas=FALSE,
                  mu2modules, doWarn=TRUE, verbose=0)
@@ -55,8 +55,8 @@ computeEigengenes(genExpr=NULL, eigenloci=NULL, netPath, geNames,
     used for eigengene computation.}
 
   \item{survival}{
-    A data frame where row names are patient IDs and must have minimum of four columns
-    namely: "Time" (to event), \code{event}, "Abnormality" and "Risk1".}
+    A data frame where row names are patient IDs and must have minimum
+    of two columns: "Time" (to event) and \code{event}.}
 
   \item{event}{
     A string determining the name of the \code{event} column in the survival data. 
@@ -128,7 +128,7 @@ madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             outPath=netPath, verbose=0)
 
 ## Usually eigenloci=NULL, see the note above.
-eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
+eigengenes <- computEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 
                                   Label1="Low", Label2="High", 

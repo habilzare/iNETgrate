@@ -1,5 +1,5 @@
-\name{computeEigenloci}
-\alias{computeEigenloci}
+\name{computEigenloci}
+\alias{computEigenloci}
 
 \title{Computes an eigenloci for each gene}
 
@@ -8,7 +8,7 @@
     the most correlated loci (i.e., core) of that gene.}
   
 \usage{
-computeEigenloci(dnam, locus2gene, geNames, Labels, Label1, 
+computEigenloci(dnam, locus2gene, geNames, Labels, Label1, 
                   Label2, plotPath=NULL, genesColName="Gene_Symbol",
                   coordinatesColName="Genomic_Coordinate", lociColName="probeID", 
                   dnamGene=NULL, doDebug=FALSE, verbose=0)}
@@ -113,7 +113,7 @@ survivalAml <- toyCleanedAml$survival
 patientLabel <- setNames(as.character(survivalAml[,"Risk1"]), rownames(survivalAml))
 inBoth <- intersect(colnames(toyCleanedAml$dnam), names(patientLabel))
 dnamData <- toyCleanedAml$dnam[ ,inBoth]
-eigenLoci <- computeEigenloci(dnam=dnamData, locus2gene=toyCleanedAml$locus2gene,
+eigenLoci <- computEigenloci(dnam=dnamData, locus2gene=toyCleanedAml$locus2gene,
                                geNames=unionGenes,
                                Labels=patientLabel[is.element(names(patientLabel), inBoth)], 
                                Label1="Low", Label2="High", plotPath=plotPath,

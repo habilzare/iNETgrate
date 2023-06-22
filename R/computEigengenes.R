@@ -1,4 +1,4 @@
-computeEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
+computEigengenes <- function(genExpr=NULL, eigenloci=NULL, netPath, geNames,
                                 Labels, Label1, Label2, mus, combiningMu=NA,
                                 survival, event="Dead", doIgnoreNas=FALSE, 
                                 mu2modules, doWarn=TRUE, verbose=0){

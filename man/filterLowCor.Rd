@@ -18,8 +18,7 @@ filterLowCor(Data, survival, whichData=c("expression", "dnam"), ratio=1/3,
 
   \item{survival}{
     A matrix or data frame where rownames are patient IDs and must have minimum 
-    of four columns namely "Time" (to event), \code{event}, "Abnormality" and 
-    "Risk1".}
+    of two columns namely "Time" (to event) and \code{event}.}
 
   \item{whichData}{
     A character value to describe input Data being filtered. E.g. expression for gene

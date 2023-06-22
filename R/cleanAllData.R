@@ -4,8 +4,8 @@ cleanAllData <- function(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=
                           savePath, isFfpe=c(FALSE), annLib="Auto", clinical, 
                           patientIDCol="bcr_patient_barcode", eventCol="vital_status", 
                           event="Dead", timeCol="days_to_last_followup", riskFactorCol, 
-                          riskCatCol=NULL, riskHigh=NULL, riskLow=NULL,
-                          otherLabel=NULL, verbose=0){
+                          riskCatCol=NULL, riskHigh="High", riskLow="Low",
+                          verbose=0){
     ## This is a wrapper function that executes preprocessDnam,
     ## prepareSurvival functions, and sets sample2patient mapping for geneExpr,
     ## rawDnam, and clinical data.
@@ -29,7 +29,6 @@ cleanAllData <- function(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=
     ## riskCatCol: The column in the clinical that has the risk levels.
     ## riskFactorCol: The column in the clinical that has description of the risk (e.g., cytogenetic
     ## abnormalities in AML).
-    ## otherLabel: a vector with names the same as row names of clinical.
     ## Output
     ## A list containing
     ## survival: A matrix where rows are patients and columns are “Time” (to event), event (i.g., "Dead")
@@ -59,13 +58,12 @@ cleanAllData <- function(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=
                                  eventCol=eventCol, event=event,
                                  timeCol=timeCol, riskCatCol=riskCatCol, 
                                  riskFactorCol=riskFactorCol, riskHigh=riskHigh,
-                                 riskLow=riskLow, otherLabel=otherLabel,
-                                 verbose=verbose)
+                                 riskLow=riskLow, verbose=verbose)
 
     ## sample to patient mapping
     message.if(me="Sample to patient mapping for gene expression data ...",
                verbose=verbose)
-    s2pExpr <- sample2atient(sampleInfo=genExprSampleInfo, sampleCol=sampleCol,
+    s2pExpr <- sample2pat(sampleInfo=genExprSampleInfo, sampleCol=sampleCol,
                                  patientCol=patientCol, sampleTypeCol=sampleTypeCol,
                                  sampleTypesIn=sampleTypesIn, isFfpe=isFfpe, 
                                  verbose=verbose)
@@ -83,7 +81,7 @@ cleanAllData <- function(genExpr, genExprSampleInfo, rawDnam, rawDnamSampleInfo=
     message.if(me="Sample to patient mapping for dna methylation data ...",
                verbose=verbose)
     betaMatrix <- processedDnam$dnam
-    s2pDnam <- sample2atient(sampleInfo=processedDnam$sampleInfo, 
+    s2pDnam <- sample2pat(sampleInfo=processedDnam$sampleInfo, 
                                  sampleCol=sampleCol, patientCol=patientCol, 
                                  sampleTypeCol=sampleTypeCol, isFfpe=isFfpe,
                                  sampleTypesIn=sampleTypesIn, verbose=verbose)

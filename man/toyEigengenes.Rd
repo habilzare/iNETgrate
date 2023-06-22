@@ -27,7 +27,7 @@
     (2013). New England Journal of Medicine 368.22: 2059-2074.}
 
 \seealso{
-  \code{\link{iNETgrate-package}}, \code{\link{computeEigengenes}},
+  \code{\link{iNETgrate-package}}, \code{\link{computEigengenes}},
   \code{\link{toyCleanedAml}}, \code{\link{toyComputEloci}}
 }
 
@@ -47,7 +47,7 @@ madeNetwork <- makeNetwork(genExpr=toyCleanedAml$genExpr, eigenloci=eigenloci,
                             geNames=colnames(eigenloci), mus=c(0.6), 
                             outPath=netPath, verbose=0)
 
-eigengenes <- computeEigengenes(genExpr=toyCleanedAml$genExpr, 
+eigengenes <- computEigengenes(genExpr=toyCleanedAml$genExpr, 
                                   eigenloci=eigenloci, netPath=netPath, 
                                   geNames=colnames(eigenloci), Labels=patientLabel, 
                                   Label1="Low", Label2="High", 

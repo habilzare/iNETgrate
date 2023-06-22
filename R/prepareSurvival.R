@@ -1,22 +1,18 @@
 prepareSurvival <- function(clinical, patientIDCol="bcr_patient_barcode",
-                             eventCol="vital_status", event="Dead",
-                             timeCol="days_to_last_followup",
-                             riskFactorCol, riskCatCol=NULL, riskHigh=NULL,
-                             riskLow=NULL, otherLabel=NULL, verbose=0){
-    ## clinical: a matrix where row names are cases
+                            eventCol="vital_status", event="Dead",
+                            timeCol="days_to_last_followup",
+                            riskCatCol=NULL, riskFactorCol=NULL,
+                            riskHigh="High", riskLow="Low", verbose=0){
+    ## clinical: a matrix where row names are cases.
     ## riskCatCol: The column in the clinical that has the risk levels.
     ## riskFactorCol: The column in the clinical that has description of the risk (e.g., cytogenetic
     ## abnormalities in AML).
-    ## otherLabel: a vector with names the same as row names of clinical.
    
     ## QC
-    if(all(c(is.null(riskCatCol), is.null(riskHigh), is.null(riskLow))))
-        stop("All riskCatCol, riskHigh, and riskLow cannot be NULL!")
-    if(is.null(riskCatCol))
-        if(any(c(is.null(riskHigh), is.null(riskLow))))
-            stop("riskHigh and/or riskLow cannot be NULL, when riskCatCol is NULL")
-    if(is.null(riskHigh) != is.null(riskLow))
-        stop("riskHigh and riskLow are not defined appropriately!")
+    if(any(c(is.null(riskHigh), is.null(riskLow))))
+        stop("riskHigh and riskLow cannot be NULL!")
+    if(is.null(riskCatCol) && is.null(riskFactorCol))
+        stop("riskCatCol and riskFactorCol cannot be NULL together!")
 
     ## Removing duplicate patient clinical data  
     clinUnique <- clinical[!duplicated(clinical[, patientIDCol]), ]
@@ -40,10 +36,13 @@ prepareSurvival <- function(clinical, patientIDCol="bcr_patient_barcode",
             survival[which(!survival[, riskCatCol] %in% c("High", "Low")),
                      riskCatCol] <- "Int"
         }  ## End (if(!(any(c(is.null(riskHigh), is.null(riskLow)))))))
-    } else{ ## If riskCatCol is NULL
+    } else { ## If riskCatCol is NULL
         riskFactors <- unique(as.character(clinUnique[, riskFactorCol]))
-        if(!(riskHigh %in% riskFactors && riskLow %in% riskFactors)){
-            stop("riskHigh and riskLow values don't match riskFactors")
+        if(any(!riskHigh %in% riskFactors)){
+            stop("riskHigh values don't match the riskFactorCol column of clinical!")
+        }
+        if(any(!riskLow %in% riskFactors)){
+            stop("riskLow values don't match the riskFactorCol column of clinical!")
         } 
         survival <- clinUnique[,c(patientIDCol, eventCol, timeCol, riskFactorCol)]
         survival[which(as.character(survival[, riskFactorCol]) %in% riskHigh), 
@@ -54,7 +53,7 @@ prepareSurvival <- function(clinical, patientIDCol="bcr_patient_barcode",
                          "Risk1"] <- "Int"
     }  ## End else{}
     
-    colnames(survival) <- c("PatientID", event, "Time", "Abnormality", "Risk1")
+    colnames(survival) <- c("PatientID", event, "Time", riskFactorCol, "Risk1")
 
     ## Setting event col to 0 and 1
     survival[, event] <- as.factor(survival[, event])
@@ -66,11 +65,6 @@ prepareSurvival <- function(clinical, patientIDCol="bcr_patient_barcode",
     if("days_to_death" %in% colnames(clinUnique)){
         survival[DeadPatients, "Time"] <- clinUnique[which(clinUnique[, patientIDCol] %in% DeadPatients), 
                                                      "days_to_death"]
-    }
-
-    ## Add more data:
-    if(!is.null(otherLabel)){
-        survival[, "Risk2"] <- otherLabel[rownames(survival)]
     }
 
     ## Checking for NA "Time"
