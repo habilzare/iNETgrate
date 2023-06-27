@@ -2,7 +2,7 @@ Package: iNETgrate
 Type: Package
 Title: Integrates DNA methylation data with gene expression in a single
         gene network
-Version: 0.99.104
+Version: 0.99.108
 Date: 2023-03-24
 Authors@R: c(
     person("Isha", "Mehta", role = "aut",
@@ -35,7 +35,7 @@ License: GPL-3
 BugReports: https://github.com/Bioconductor/BiocManager/issues
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-06-19 20:35:17 UTC; habil
+Packaged: 2023-06-27 14:47:38 UTC; habil
 Author: Isha Mehta [aut] (<https://orcid.org/0000-0002-6009-0787>),
   Ghazal Ebrahimi [aut],
   Hanie Samimi [aut],

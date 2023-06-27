@@ -99,7 +99,7 @@ installed from \Bioconductor{} by using following commands in R:
 \texttt{BiocManager::install("iNETgrate")}
 %% \texttt{BiocManager::install("habilzare/iNETgrate")} installs the devel version.
 
-\iffalse
+%%\iffalse
 Alternatively, if the built package is already available,
 it can be installed by the following command in Unix:
 \newline
@@ -110,7 +110,7 @@ $\\$
 where x.y.z determines the version. The second approach requires all
 the dependencies be installed manually, therefore, the first approach
 is preferred.
-\fi
+%%\fi
 
 \subsection{A quick overview}
 \inet constructs a weighted gene network where the weights of the edges is
@@ -203,7 +203,7 @@ names(toyRawAml)
 Then, we define the clinical settings and run \inet.
 
 %% Set to FALSE for a quicker build and check.
-<<oneStep, echo=TRUE, eval=TRUE>>=
+<<clinical, echo=TRUE, eval=TRUE>>=
 clinSettings <- c("patientIDCol"="bcr_patient_barcode",
 "eventCol"="vital_status",
 "timeCol"="days_to_last_followup",
@@ -215,9 +215,13 @@ clinSettings <- c("patientIDCol"="bcr_patient_barcode",
 print(clinSettings)
 @
 
-See the documentation of the \Rcode{iNETgrate} function for a toy example.
-%%inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings, 
-%%                        saveDir="iNETgrateOut", mus=0.6)
+See the documentation of the \Rcode{iNETgrate} function for a toy example
+like the following:
+<<oneStep, echo=TRUE, eval=FALSE>>=
+inetgrator <- iNETgrate(Data=toyRawAml, clinSettings=clinSettings, 
+                        saveDir="iNETgrateOut", mus=0.6)
+@
+
 Results and figures are saved in the "iNETgrateOut" directory under the current directory.  
 For more advanced applications, the user is encouraged to analyze the data step-by-step
 and customize  the individual functions such as \Rfunction{makeNetwork} and 
